@@ -1,6 +1,7 @@
 package com._30something.expr_calc;
 
 public interface Expression {
+
     /**
      * Recursively computes the result of this expression.
      */
@@ -12,4 +13,5 @@ public interface Expression {
     String debugRepresentation();
 
     Object accept(ExpressionVisitor visitor);
+
 }

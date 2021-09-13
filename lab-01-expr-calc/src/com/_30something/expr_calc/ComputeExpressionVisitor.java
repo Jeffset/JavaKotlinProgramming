@@ -16,4 +16,5 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
     public Object visitParenthesis(ParenthesisExpression expr) {
         return null;
     }
+
 }

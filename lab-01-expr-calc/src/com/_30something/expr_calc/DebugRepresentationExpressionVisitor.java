@@ -16,6 +16,7 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
     public Object visitParenthesis(ParenthesisExpression expr) {
         return null;
     }
+
 }
 
 //    double result = (Double) expression.accept(new ComputeExpressionVisitor());
