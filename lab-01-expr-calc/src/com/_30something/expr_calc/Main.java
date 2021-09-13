@@ -5,7 +5,7 @@ public class Main {
         Parser parser = new ParserImpl();
         try {
             Expression expr = parser.parseExpression("(22 + 5) * 74 - 3");
-            System.out.println(expr.debugRepresentation());
+            //System.out.println(expr.debugRepresentation());
         } catch (ExpressionParseException exception) {
             System.out.println("hahaha");
         }

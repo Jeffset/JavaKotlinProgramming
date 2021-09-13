@@ -1,8 +1,12 @@
 package com._30something.expr_calc;
 
-public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
+public class ToStringVisitor implements ExpressionVisitor {
 
     // TODO
+
+    private ToStringVisitor() {
+
+    }
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
@@ -21,4 +25,6 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
 
         return null;
     }
+
+    public static final ToStringVisitor INSTANCE = new ToStringVisitor();
 }

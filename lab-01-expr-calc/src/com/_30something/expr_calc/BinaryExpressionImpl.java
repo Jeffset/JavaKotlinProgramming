@@ -18,37 +18,6 @@ public class BinaryExpressionImpl implements BinaryExpression {
     }
 
     @Override
-    public double compute() {
-        if (operation == null) return 0;
-        double left_res = getLeft().compute();
-        double right_res = getRight().compute();
-        switch (operation) {
-            case ADD -> {
-                return left_res + right_res;
-            }
-            case SUBTRACT -> {
-                return left_res - right_res;
-            }
-            case MULTIPLY -> {
-                return left_res * right_res;
-            }
-            case DIVIDE -> {
-                if (right_res == 0) throw new ArithmeticException("Division by zero");
-                return left_res / right_res;
-            }
-            default -> {
-                return 0;
-            }
-        }
-    }
-
-    @Override
-    public String debugRepresentation() {
-        // TODO
-        return null;
-    }
-
-    @Override
     public Object accept(ExpressionVisitor visitor) {
         visitor.visitBinaryExpression(this);
         return null;
@@ -56,6 +25,5 @@ public class BinaryExpressionImpl implements BinaryExpression {
 
     private final Expression left = null;
     private final Expression right = null;
-    private final BinOpKind operation = null;
-
+    private final BinOpKind operation = BinOpKind.DEFAULT;
 }
