@@ -22,7 +22,7 @@ public class ParserImpl implements Parser {
     }
 
     private ArrayList<Expression> parseRawString(String input) throws ExpressionParseException {
-        ArrayList<Expression> result = new ArrayList<Expression>();
+        ArrayList<Expression> result = new ArrayList<>();
         for (int i = 0; i < input.length(); i++) {
             Expression expr;
             char c = input.charAt(i);
@@ -60,8 +60,8 @@ public class ParserImpl implements Parser {
     }
 
     private ArrayList<Expression> InfixToPostfix(ArrayList<Expression> tokens) {
-        ArrayList<Expression> result = new ArrayList<Expression>();
-        Stack<Expression> stack = new Stack<Expression>();
+        ArrayList<Expression> result = new ArrayList<>();
+        Stack<Expression> stack = new Stack<>();
         for (var i : tokens) {
             if (i instanceof LiteralValue) {
                 result.add(i);
@@ -99,12 +99,12 @@ public class ParserImpl implements Parser {
     }
 
     private Expression FromPostfixToTree(ArrayList<Expression> tokens) {
-        Stack<Expression> st = new Stack<Expression>();
-        Expression t, t1, t2;
+        Stack<Expression> st = new Stack<>();
+        Expression t;
         for (var i : tokens) {
             if (!(i instanceof LiteralValue)) {
-                t1 = st.pop();
-                t2 = st.pop();
+                Expression t1 = st.pop();
+                Expression t2 = st.pop();
                 BinaryExpressionImpl temp = (BinaryExpressionImpl) i;
                 t = new BinaryExpressionImpl(temp.getOperation(), t2, t1);
                 st.push(t);
