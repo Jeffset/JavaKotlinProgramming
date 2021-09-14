@@ -1,5 +1,9 @@
 public class LiteralValue implements Literal {
 
+    public LiteralValue(int value) {
+        this.value = value;
+    }
+
     @Override
     public double getValue() {
         return value;
@@ -7,11 +11,7 @@ public class LiteralValue implements Literal {
 
     @Override
     public Object accept(ExpressionVisitor visitor) {
-        return null;
-    }
-
-    public LiteralValue(int value) {
-        this.value = value;
+        return visitor.visitLiteral(this);
     }
 
     int value;

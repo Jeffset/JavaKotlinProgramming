@@ -1,4 +1,6 @@
 enum BinOpKind {
     plus,
-    minus
+    minus,
+    mult,
+    div
 }

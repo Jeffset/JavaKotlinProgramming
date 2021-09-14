@@ -23,9 +23,9 @@ public class BinaryExpressionImpl implements BinaryExpression{
 
     @Override
     public Object accept(ExpressionVisitor visitor) {
-        return null;
+        return visitor.visitBinaryExpression(this);
     }
-    BinOpKind bin_op_kind;
-    Expression expression_right;
-    Expression expression_left;
+    private final BinOpKind bin_op_kind;
+    private final Expression expression_right;
+    private final Expression expression_left;
 }

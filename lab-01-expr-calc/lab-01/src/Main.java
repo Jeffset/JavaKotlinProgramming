@@ -10,6 +10,9 @@ public class Main {
         Expression root;
         try {
             root = new ParserImpl().parseExpression(input);
+            System.out.println("tree: " + root.accept(new DebugRepresentationExpressionVisitor()));
+            double result = (Double) root.accept(new ComputeExpressionVisitor());
+            System.out.println("result: " + result);
         }
         catch (ExpressionParseException e) {
             System.out.println("something went wrong in parser");

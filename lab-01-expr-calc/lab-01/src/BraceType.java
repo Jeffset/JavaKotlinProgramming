@@ -1,0 +1,4 @@
+enum BraceType {
+    open,
+    close
+}
