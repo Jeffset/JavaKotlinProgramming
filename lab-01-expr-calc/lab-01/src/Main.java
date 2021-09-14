@@ -11,6 +11,7 @@ public class Main {
         try {
             root = new ParserImpl().parseExpression(input);
             System.out.println("tree: " + root.accept(new DebugRepresentationExpressionVisitor()));
+            System.out.println("tree depth: " + root.accept(new TreeDepthVisitor()));
             double result = (Double) root.accept(new ComputeExpressionVisitor());
             System.out.println("result: " + result);
         }
