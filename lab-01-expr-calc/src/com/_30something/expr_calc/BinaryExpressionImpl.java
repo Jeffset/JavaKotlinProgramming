@@ -2,6 +2,12 @@ package com._30something.expr_calc;
 
 public class BinaryExpressionImpl implements BinaryExpression {
 
+    public BinaryExpressionImpl(Expression left, Expression right, BinOpKind operation) {
+        this.left = left;
+        this.right = right;
+        this.operation = operation;
+    }
+
     @Override
     public Expression getLeft() {
         return left;
@@ -19,11 +25,10 @@ public class BinaryExpressionImpl implements BinaryExpression {
 
     @Override
     public Object accept(ExpressionVisitor visitor) {
-        visitor.visitBinaryExpression(this);
-        return null;
+        return visitor.visitBinaryExpression(this);
     }
 
-    private final Expression left = null;
-    private final Expression right = null;
-    private final BinOpKind operation = BinOpKind.DEFAULT;
+    private Expression left = null;
+    private Expression right = null;
+    private BinOpKind operation = BinOpKind.DEFAULT;
 }
