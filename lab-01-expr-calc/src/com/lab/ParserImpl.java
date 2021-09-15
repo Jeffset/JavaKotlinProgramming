@@ -1,6 +1,5 @@
 package com.lab;
 
-import java.io.CharArrayReader;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -67,6 +66,9 @@ public class ParserImpl implements Parser {
             } else if (IsLiteral(string)) {
                 Literal literal = new LiteralImpl(Double.parseDouble(string));
                 expressions.push(literal);
+            } else if (IsVariable(string)) {
+                Variable variable = new VariableImpl(string);
+                expressions.push(variable);
             } else {
                 throw new ExpressionParseException();
             }
@@ -88,6 +90,17 @@ public class ParserImpl implements Parser {
         char[] char_array = string.toCharArray();
         for (char symbol : char_array) {
             if (!(symbol >= '0' && symbol <= '9')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean IsVariable(String string) {
+        char[] char_array = string.toCharArray();
+        for (char symbol : char_array) {
+            if (!((symbol >= 'a' && symbol <= 'z') ||
+                    (symbol >= 'A' && symbol <= 'Z'))) {
                 return false;
             }
         }

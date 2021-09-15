@@ -1,11 +1,17 @@
 package com.lab;
 
+import java.util.HashMap;
+
 public class ComputeExpressionVisitor implements ExpressionVisitor {
+
+    ComputeExpressionVisitor(HashMap<String, Double> map) {
+        map_ = map;
+    }
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
-        double l_value = (Double) expr.getLeft().accept(new ComputeExpressionVisitor());
-        double r_value = (Double) expr.getRight().accept(new ComputeExpressionVisitor());
+        double l_value = (Double) expr.getLeft().accept(new ComputeExpressionVisitor(map_));
+        double r_value = (Double) expr.getRight().accept(new ComputeExpressionVisitor(map_));
         BinOpKind operation = expr.getOperation();
         switch (operation) {
             case DIV -> {
@@ -35,4 +41,12 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
     public Object visitParenthesis(ParenthesisExpression expr) {
         return expr.getExpr();
     }
+
+    @Override
+    public Object visitVariable(Variable expr) {
+        return map_.get(expr.getVariable());
+    }
+
+    private final HashMap<String, Double> map_;
+
 }

@@ -36,4 +36,9 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
     public Object visitParenthesis(ParenthesisExpression expr) {
         return null;
     }
+
+    @Override
+    public Object visitVariable(Variable expr) {
+        return "var[" + expr.getVariable() + "]";
+    }
 }
