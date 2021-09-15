@@ -10,12 +10,14 @@ public class DepthExpressionVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitLiteral(Literal expr) {
+
         return 1;
     }
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
-        return null;
+
+        return 1 + (Integer) expr.getExpr().accept(new DepthExpressionVisitor());
     }
 
     @Override

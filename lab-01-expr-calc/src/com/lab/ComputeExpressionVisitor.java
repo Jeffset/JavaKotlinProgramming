@@ -39,7 +39,7 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
-        return expr.getExpr();
+        return expr.getExpr().accept(new ComputeExpressionVisitor(map_));
     }
 
     @Override

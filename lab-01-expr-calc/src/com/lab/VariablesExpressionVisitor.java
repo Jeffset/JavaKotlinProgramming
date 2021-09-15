@@ -20,7 +20,7 @@ public class VariablesExpressionVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
-        return null;
+        return (HashSet<String>) expr.getExpr().accept(new VariablesExpressionVisitor());
     }
 
     @Override

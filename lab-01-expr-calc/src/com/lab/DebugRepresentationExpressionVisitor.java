@@ -34,7 +34,9 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
-        return null;
+
+        return "paren-expr(" +
+                (String) expr.getExpr().accept(new DebugRepresentationExpressionVisitor()) + ")";
     }
 
     @Override

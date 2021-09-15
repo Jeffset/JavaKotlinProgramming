@@ -15,6 +15,7 @@ public class ParserImpl implements Parser {
             String string = scanner.next();
             if (IsOperation(string)) {
                 if (string.equals("(")) {
+                    stack.push("()");
                     stack.push("(");
                 } else if (string.equals(")")) {
                     while (!stack.empty() && !stack.peek().equals("(")) {
@@ -24,10 +25,10 @@ public class ParserImpl implements Parser {
                         pol_notation.append(" " + stack.peek());
                         stack.pop();
                     }
-                    stack.pop();
                     if (stack.empty()) {
                         throw new ExpressionParseException();
                     }
+                    stack.pop();
                 } else {
                     while (!stack.empty() && Priority(string) <= Priority(stack.peek())) {
                         pol_notation.append(" " + stack.peek());
@@ -55,8 +56,18 @@ public class ParserImpl implements Parser {
         while (scanner2.hasNext()) {
             String string = scanner2.next();
             if (IsOperation(string)) {
+                if (expressions.empty()) {
+                    throw new ExpressionParseException();
+                }
                 Expression second = expressions.peek();
                 expressions.pop();
+
+                // parenthesis expression
+                if (string.equals("()")) {
+                    expressions.push(new ParenthesisExpressionImpl(second));
+                    continue;
+                }
+
                 if (expressions.empty()) {
                     throw new ExpressionParseException();
                 }
@@ -80,7 +91,8 @@ public class ParserImpl implements Parser {
     boolean IsOperation(String string) {
         if (string.equals("+") || string.equals("-") ||
                 string.equals("*") || string.equals("/") ||
-                string.equals("(") || string.equals(")")) {
+                string.equals("(") || string.equals(")") ||
+                string.equals("()")) {
             return true;
         }
         return false;
@@ -88,10 +100,18 @@ public class ParserImpl implements Parser {
 
     boolean IsLiteral(String string) {
         char[] char_array = string.toCharArray();
+        int dots = 0;
         for (char symbol : char_array) {
+            if (symbol == '.') {
+                dots++;
+                continue;
+            }
             if (!(symbol >= '0' && symbol <= '9')) {
                 return false;
             }
+        }
+        if (dots > 1) {
+            return false;
         }
         return true;
     }
@@ -129,12 +149,14 @@ public class ParserImpl implements Parser {
     }
 
     int Priority(String string) {
-        if (string.equals("+") || string.equals("-")) {
+        if (string.equals("()")) {
+            return 3;
+        } else if (string.equals("*") || string.equals("/")) {
+            return 2;
+        } else if (string.equals("+") || string.equals("-")) {
             return 1;
-        } else if (string.equals("(")) {
-            return 0;
         }
-        return 2;
+        return 0;
     }
 }
 
