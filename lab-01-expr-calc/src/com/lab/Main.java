@@ -3,26 +3,37 @@ package com.lab;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws ExpressionParseException {
-        Parser parser = new ParserImpl();
+    public static void main(String[] args) {
 
-        System.out.print("enter expression: ");
-        Scanner scanner = new Scanner(System.in);
-        char[] str_expr = scanner.nextLine().toCharArray();
-        StringBuilder right_str = new StringBuilder();
-        for (char symbol : str_expr) {
-            if (symbol == '(' || symbol == ')') {
-                right_str.append(" ").append(symbol).append(" ");
-                continue;
+        Scanner scanner = null;
+        Expression expression = null;
+        boolean except = true;
+        while (except) {
+            except = false;
+            try {
+                Parser parser = new ParserImpl();
+                System.out.print("enter expression: ");
+                scanner = new Scanner(System.in);
+                char[] str_expr = scanner.nextLine().toCharArray();
+                StringBuilder right_str = new StringBuilder();
+                for (char symbol : str_expr) {
+                    if (symbol == '(' || symbol == ')') {
+                        right_str.append(' ').append(symbol).append(' ');
+                        continue;
+                    }
+                    right_str.append(symbol);
+                }
+                expression = parser.parseExpression(right_str.toString());
+            } catch (ExpressionParseException exception) {
+                except = true;
+                System.out.println("You have " + exception.getMessage() + ", " +
+                        "please try again with correct expression.");
             }
-            right_str.append(symbol);
         }
-
-        Expression expression = parser.parseExpression(right_str.toString());
-        String debug = (String) expression.accept(new DebugRepresentationExpressionVisitor());
-        int depth = (Integer) expression.accept(new DepthExpressionVisitor());
-        System.out.println(debug);
-        System.out.println(depth);
+        String debug = (String) expression.accept(DebugRepresentationExpressionVisitor.INSTANCE);
+        int depth = (Integer) expression.accept(DepthExpressionVisitor.INSTANCE);
+        System.out.println("tree: " + debug);
+        System.out.println("expr-tree depth: " + depth);
 
         HashSet<String> set = (HashSet<String>) expression.accept(new VariablesExpressionVisitor());
         HashMap<String, Double> result_map = new HashMap<>();
@@ -32,6 +43,8 @@ public class Main {
             result_map.put(variable, number);
         }
         double result = (Double) expression.accept(new ComputeExpressionVisitor(result_map));
-        System.out.println(result);
+        System.out.println("result: " + result);
+        String to_string = (String) expression.accept(ToStringVisitor.INSTANCE);
+        System.out.println(to_string);
     }
 }

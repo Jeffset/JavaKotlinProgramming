@@ -1,7 +1,5 @@
 package com.lab;
 
-import static com.lab.BinOpKind.SUB;
-
 public class BinaryExpressionImpl implements BinaryExpression {
 
     BinaryExpressionImpl(Expression left, Expression right, BinOpKind operation) {

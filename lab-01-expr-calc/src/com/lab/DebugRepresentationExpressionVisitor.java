@@ -2,6 +2,7 @@ package com.lab;
 
 public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
 
+    private DebugRepresentationExpressionVisitor() {}
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
@@ -43,4 +44,7 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
     public Object visitVariable(Variable expr) {
         return "var[" + expr.getVariable() + "]";
     }
+
+    public static final DebugRepresentationExpressionVisitor INSTANCE =
+            new DebugRepresentationExpressionVisitor();
 }

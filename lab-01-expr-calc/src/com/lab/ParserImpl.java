@@ -20,13 +20,13 @@ public class ParserImpl implements Parser {
                 } else if (string.equals(")")) {
                     while (!stack.empty() && !stack.peek().equals("(")) {
                         if (stack.peek().equals(")")) {
-                            throw new ExpressionParseException();
+                            throw new ExpressionParseException("ExpressionParseException");
                         }
                         pol_notation.append(" " + stack.peek());
                         stack.pop();
                     }
                     if (stack.empty()) {
-                        throw new ExpressionParseException();
+                        throw new ExpressionParseException("ExpressionParseException");
                     }
                     stack.pop();
                 } else {
@@ -42,7 +42,7 @@ public class ParserImpl implements Parser {
         }
         while (!stack.empty()) {
             if (!IsOperation(stack.peek())) {
-                throw new ExpressionParseException();
+                throw new ExpressionParseException("ExpressionParseException");
             }
             pol_notation.append(" " + stack.peek());
             stack.pop();
@@ -57,7 +57,7 @@ public class ParserImpl implements Parser {
             String string = scanner2.next();
             if (IsOperation(string)) {
                 if (expressions.empty()) {
-                    throw new ExpressionParseException();
+                    throw new ExpressionParseException("ExpressionParseException");
                 }
                 Expression second = expressions.peek();
                 expressions.pop();
@@ -69,7 +69,7 @@ public class ParserImpl implements Parser {
                 }
 
                 if (expressions.empty()) {
-                    throw new ExpressionParseException();
+                    throw new ExpressionParseException("ExpressionParseException");
                 }
                 Expression first = expressions.peek();
                 expressions.pop();
@@ -81,7 +81,7 @@ public class ParserImpl implements Parser {
                 Variable variable = new VariableImpl(string);
                 expressions.push(variable);
             } else {
-                throw new ExpressionParseException();
+                throw new ExpressionParseException("ExpressionParseException");
             }
         }
 
@@ -101,17 +101,17 @@ public class ParserImpl implements Parser {
     boolean IsLiteral(String string) {
         char[] char_array = string.toCharArray();
         int dots = 0;
-        for (char symbol : char_array) {
-            if (symbol == '.') {
+        for (int i = 0; i < char_array.length; ++i) {
+            if (char_array[i] == '.') {
+                if (i == 0 || dots > 0) {
+                    return false;
+                }
                 dots++;
                 continue;
             }
-            if (!(symbol >= '0' && symbol <= '9')) {
+            if (!(char_array[i] >= '0' && char_array[i] <= '9')) {
                 return false;
             }
-        }
-        if (dots > 1) {
-            return false;
         }
         return true;
     }
@@ -143,7 +143,7 @@ public class ParserImpl implements Parser {
                 return BinOpKind.DIV;
             }
             default -> {
-                throw new ExpressionParseException();
+                throw new ExpressionParseException("ExpressionParseException");
             }
         }
     }

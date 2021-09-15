@@ -48,5 +48,4 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
     }
 
     private final HashMap<String, Double> map_;
-
 }

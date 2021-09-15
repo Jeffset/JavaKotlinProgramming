@@ -2,6 +2,8 @@ package com.lab;
 
 public class DepthExpressionVisitor implements ExpressionVisitor {
 
+    private DepthExpressionVisitor() {}
+
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
         return Math.max((Integer) expr.getLeft().accept(new DepthExpressionVisitor()),
@@ -24,4 +26,6 @@ public class DepthExpressionVisitor implements ExpressionVisitor {
     public Object visitVariable(Variable expr) {
         return 1;
     }
+
+    public static final DepthExpressionVisitor INSTANCE = new DepthExpressionVisitor();
 }
