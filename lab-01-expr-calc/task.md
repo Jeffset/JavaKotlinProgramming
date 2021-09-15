@@ -106,60 +106,6 @@ public interface Parser {
   Expression parseExpression(String input) throws ExpressionParseException;
 }
 ```
-
-Мы определили, как мы будем получать дерево (с точки зрения интерфейса).
-Но как нам работать с этим деревом? Тут существует несколько подходов.
-Рассмотрим первый, который можно реализовать уже сейчас (не дополняя API):
-```java
-double computeExpression(Expression expression) {
-  // runtime-проверка типов.
-  if (expression instanceof BinaryExpression) {
-    // Явное преобразование типов (выглядит как C-style cast в C++).
-    BinaryExpression binary = (BinaryExpression) expression;
-    return compute(binary.getLeft(), binary.getRight());
-  } else if (expression instanceof Literal) {
-    Literal literal = (Literal) expression;
-    return literal.getValue();
-  } else if (...) {
-    ...
-  } else {
-    throw IllegalStateException(
-       "I will most probably forget to support new expression types in this ugly if :(");
-  }
-}
-
-String debugRepresentationForExpression(Expression expression) {
-  // Такая же портянка if-else-if, уфф...
-}
-```
-Так мы делать конечно же не будем -
-это некрасивое, тяжело поддерживаемое решение, у которого будут проблемы с производительностью.
-
-Вместо этого можно сделать подход через виртуальные функции:
-```java
-public interface Expression {
-  /**
-   * Recursively computes the result of this expression.
-   */
-  double compute();
-
-  /**
-   * Returns string representation of this expression for debugging purposes.
-   */
-  String debugRepresentation();
-}
-
-// Реализации для каждого класса будут более-менее очевидны.
-```
-Такой подход вполне приемлем, работоспособен и производителен.
-Но есть идейный нюанс: мы можем хотеть от выражения совершенного разных вещей.
-И если вычисление результата и имеет прямое отношение к выражению и потому оправдывает
-свое расположение в интерфейсе `Expression` - "я выражение и меня можно вычислить",
-то если мы захотим делать произвольные операции с деревом выражения, нам не круто будет
-захламлять интерфейс Expression и каждый конкретный класс нашими "левыми" потребностями.
-А если вынести `Expression` в общую библиотеку, а код писать в зависящем модуле, то у нас
-совсем не будет возможности модифицировать интерфейс `Expression`. Как же быть в таком случае?
-
 Подход (или, если хотите, паттерн) к решению такого типа проблем имеет в коммьюнити название "Visitor":
 ```java
 // file: ExpressionVisitor.java

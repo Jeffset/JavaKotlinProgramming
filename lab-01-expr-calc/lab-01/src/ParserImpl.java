@@ -2,6 +2,7 @@ import exceptions.ExpressionParseException;
 
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.Vector;
 
 public class ParserImpl implements Parser {
     @Override
@@ -9,27 +10,35 @@ public class ParserImpl implements Parser {
         return FromPostfixToTree(InfixToPostfix(parseRawString(input)));
     }
 
-    boolean isAllowed(char c) {
-        return isOperator(c) || isLiteral(c) || c == '(' || c == ')';
-    }
-
-    boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/';
-    }
-
-    boolean isLiteral(char c) {
-        return (c - '0' >= 0) && (c - '0' < 10);
-    }
-
     private ArrayList<Expression> parseRawString(String input) throws ExpressionParseException {
         ArrayList<Expression> result = new ArrayList<>();
         for (int i = 0; i < input.length(); i++) {
-            Expression expr;
             char c = input.charAt(i);
+            if(c == ' ') {
+                continue;
+            }
+            Expression expr;
             if (!isAllowed(c)) {
                 throw new ExpressionParseException();
-            } else if (isLiteral(c)) {
-                expr = new LiteralValue(c - '0');
+            } else if(Character.isLetter(c)) {
+                expr = new VariableLiteral(String.valueOf(c));
+            }
+            else if (isLiteral(c)) {
+                Vector<Integer> inv_number = new Vector<Integer>();
+                inv_number.add(c-'0');
+                while(true) {
+                    if(i != input.length() - 1 && isLiteral(input.charAt(i + 1))) {
+                        i++;
+                        inv_number.add(input.charAt(i) - '0');
+                    } else {
+                        break;
+                    }
+                }
+                int value = 0;
+                for(int j = 0; j < inv_number.size(); j++) {
+                    value += inv_number.elementAt(j) * Math.pow(10,(inv_number.size() - j - 1));
+                }
+                expr = new LiteralValue(value);
             } else if (c == '(') {
                 expr = new ParenthesisExpression(BraceType.open);
             } else if (c == ')') {
@@ -63,7 +72,7 @@ public class ParserImpl implements Parser {
         ArrayList<Expression> result = new ArrayList<>();
         Stack<Expression> stack = new Stack<>();
         for (var i : tokens) {
-            if (i instanceof LiteralValue) {
+            if (i instanceof LiteralValue || i instanceof VariableLiteral) {
                 result.add(i);
                 continue;
             }
@@ -102,7 +111,7 @@ public class ParserImpl implements Parser {
         Stack<Expression> st = new Stack<>();
         Expression t;
         for (var i : tokens) {
-            if (!(i instanceof LiteralValue)) {
+            if (!(i instanceof LiteralValue || i instanceof VariableLiteral)) {
                 Expression t1 = st.pop();
                 Expression t2 = st.pop();
                 BinaryExpressionImpl temp = (BinaryExpressionImpl) i;
@@ -115,6 +124,18 @@ public class ParserImpl implements Parser {
         t = st.peek();
         st.pop();
         return t;
+    }
+
+    boolean isAllowed(char c) {
+        return isOperator(c) || isLiteral(c) || c == '(' || c == ')' || Character.isLetter(c);
+    }
+
+    boolean isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/';
+    }
+
+    boolean isLiteral(char c) {
+        return (c - '0' >= 0) && (c - '0' < 10);
     }
 
     private int Priority(Expression token) {

@@ -1,4 +1,10 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
 public class ComputeExpressionVisitor implements ExpressionVisitor {
+    Map<String, Double> variables = new HashMap<String, Double>();
+
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
         BinOpKind opKind = expr.getOperation();
@@ -21,5 +27,19 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
     @Override
     public Object visitLiteral(Literal expr) {
         return expr.getValue();
+    }
+
+    @Override
+    public Object visitVariable(VariableLiteral expr) {
+        if(variables.containsKey(expr.getName())) {
+            return variables.get(expr.getName());
+        } else {
+            System.out.print("value for '" + expr.getName() + "': ");
+            Scanner in = new Scanner(System.in);
+            String input = in.next();
+            double result = Double.parseDouble(input);
+            variables.put(expr.getName(), result);
+            return result;
+        }
     }
 }

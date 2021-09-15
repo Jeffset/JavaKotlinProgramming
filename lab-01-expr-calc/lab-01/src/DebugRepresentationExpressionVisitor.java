@@ -24,6 +24,11 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitLiteral(Literal expr) {
-        return new String(String.valueOf(expr.getValue()));
+        return String.valueOf(expr.getValue());
+    }
+
+    @Override
+    public Object visitVariable(VariableLiteral expr) {
+        return expr.getName();
     }
 }
