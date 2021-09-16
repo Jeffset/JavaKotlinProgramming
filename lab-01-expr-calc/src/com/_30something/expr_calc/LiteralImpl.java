@@ -2,9 +2,9 @@ package com._30something.expr_calc;
 
 public class LiteralImpl implements Literal {
 
-    public LiteralImpl(String string_value, ParserImpl.CharTypes value_type) {
-        this.string_value = string_value;
-        this.value_type = value_type;
+    public LiteralImpl(String stringValue, ParserImpl.CharTypes valueType) {
+        this.stringValue = stringValue;
+        this.valueType = valueType;
     }
 
     @Override
@@ -14,17 +14,17 @@ public class LiteralImpl implements Literal {
 
     @Override
     public double getValue() {
-        return Double.parseDouble(string_value);
+        return Double.parseDouble(stringValue);
     }
 
     public String getString() {
-        return string_value;
+        return stringValue;
     }
 
     public ParserImpl.CharTypes getType() {
-        return value_type;
+        return valueType;
     }
 
-    private final String string_value;
-    private final ParserImpl.CharTypes value_type;
+    private final String stringValue;
+    private final ParserImpl.CharTypes valueType;
 }

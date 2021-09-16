@@ -5,21 +5,21 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
         BinOpKind operation = expr.getOperation();
-        Double left_res = (Double) expr.getLeft().accept(this);
-        Double right_res = (Double) expr.getRight().accept(this);
+        Double leftRes = (Double) expr.getLeft().accept(this);
+        Double rightRes = (Double) expr.getRight().accept(this);
         switch (operation) {
             case ADD -> {
-                return left_res + right_res;
+                return leftRes + rightRes;
             }
             case SUBTRACT -> {
-                return left_res - right_res;
+                return leftRes - rightRes;
             }
             case MULTIPLY -> {
-                return left_res * right_res;
+                return leftRes * rightRes;
             }
             case DIVIDE -> {
-                if (right_res == 0) throw new ArithmeticException("Division by zero");
-                return left_res / right_res;
+                if (rightRes == 0) throw new ArithmeticException("Division by zero found");
+                return leftRes / rightRes;
             }
             case DEFAULT -> {
                 return 0;

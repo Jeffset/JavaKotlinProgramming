@@ -1,23 +1,27 @@
 package com._30something.expr_calc;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws ExpressionParseException {
-        ParserImpl parser = new ParserImpl();
-        System.out.print("Enter expression: ");
         Scanner in = new Scanner(System.in);
-        String input = in.nextLine();
-        List<ParserImpl.Token> list = parser.buildPolishNotation(parser.verifyTokens(parser.tokenize(input)));
-        for (ParserImpl.Token token : list) {
-            System.out.print(token.string);
-            System.out.print(' ');
-            System.out.println(token.type);
-        }
-        Expression expr = parser.buildExpression(list);
-        DebugRepresentationExpressionVisitor debug_visitor = new DebugRepresentationExpressionVisitor();
-        System.out.println((String)(debug_visitor.visitBinaryExpression((BinaryExpression)expr)));
-        //System.out.println(parser.parseExpression(input));
+        ParserImpl parser = new ParserImpl();
+        RequestVisitor requestVisitor = new RequestVisitor();
+        ComputeExpressionVisitor computeVisitor = new ComputeExpressionVisitor();
+        DebugRepresentationExpressionVisitor debugVisitor = new DebugRepresentationExpressionVisitor();
+        DepthVisitor depthVisitor = new DepthVisitor();
+        ToStringVisitor toStringVisitor = ToStringVisitor.INSTANCE;
+
+        System.out.print("Enter expression: ");
+        Expression expr = parser.parseExpression(in.nextLine());
+        System.out.print("Tree: ");
+        System.out.println((String) (expr.accept(debugVisitor)));
+        System.out.print("Expr-tree depth: ");
+        System.out.println(expr.accept(depthVisitor));
+        System.out.print("Reconstructed expression: ");
+        System.out.println((String) (expr.accept(toStringVisitor)));
+
+        System.out.print("Result: ");
+        System.out.println(expr.accept(computeVisitor));
     }
 }

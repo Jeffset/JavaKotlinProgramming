@@ -28,7 +28,7 @@ public class BinaryExpressionImpl implements BinaryExpression {
         return visitor.visitBinaryExpression(this);
     }
 
-    private Expression left = null;
-    private Expression right = null;
-    private BinOpKind operation = BinOpKind.DEFAULT;
+    private final Expression left;
+    private final Expression right;
+    private final BinOpKind operation;
 }

@@ -198,10 +198,9 @@ public class ParserImpl implements Parser {
 
     @Override
     public Expression parseExpression(String input) throws ExpressionParseException {
-        // TODO: Create map with literals
-        List<Token> raw_tokens = tokenize(input);
-        List<Token> verified_tokens = verifyTokens(raw_tokens);
-        List<Token> polish_notation_tokens = buildPolishNotation(verified_tokens);
-        return buildExpression(polish_notation_tokens);
+        List<Token> rawTokens = tokenize(input);
+        List<Token> verifiedTokens = verifyTokens(rawTokens);
+        List<Token> polishNotationTokens = buildPolishNotation(verifiedTokens);
+        return buildExpression(polishNotationTokens);
     }
 }

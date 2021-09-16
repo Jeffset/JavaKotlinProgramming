@@ -4,24 +4,28 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
+        String leftRes = (String) expr.getLeft().accept(this);
+        String rightRes = (String) expr.getRight().accept(this);
+        String operationPrefix;
         if (expr.getOperation() == BinOpKind.ADD) {
-            return "add(" + expr.getLeft().accept(this) + ", " + expr.getRight().accept(this) + ")";
+            operationPrefix = "add";
         } else if (expr.getOperation() == BinOpKind.SUBTRACT) {
-            return "sub(" + expr.getLeft().accept(this) + ", " + expr.getRight().accept(this) + ")";
+            operationPrefix = "sub";
         } else if (expr.getOperation() == BinOpKind.MULTIPLY) {
-            return "mul(" + expr.getLeft().accept(this) + ", " + expr.getRight().accept(this) + ")";
+            operationPrefix = "mul";
         } else {
-            return "div(" + expr.getLeft().accept(this) + ", " + expr.getRight().accept(this) + ")";
+            operationPrefix = "div";
         }
+        return operationPrefix + "(" + leftRes + ", " + rightRes + ")";
     }
 
     @Override
     public Object visitLiteral(Literal expr) {
-        LiteralImpl casted_expr = (LiteralImpl)expr;
-        if (casted_expr.getType() == ParserImpl.CharTypes.LITERAL) {
-            return "var[" + casted_expr.getString() + "]";
+        LiteralImpl castedExpr = (LiteralImpl)expr;
+        if (castedExpr.getType() == ParserImpl.CharTypes.LITERAL) {
+            return "var[" + castedExpr.getString() + "]";
         } else {
-            return "'" + casted_expr.getValue() + "'";
+            return "'" + castedExpr.getValue() + "'";
         }
     }
 
