@@ -23,21 +23,17 @@ public class ParserImpl implements Parser {
             } else if (Character.isLetter(c)) {
                 expr = new VariableLiteral(String.valueOf(c));
             } else if (isLiteral(c)) {
-                Vector<Integer> inv_number = new Vector<>();
-                inv_number.add(c - '0');
+                StringBuilder builder = new StringBuilder();
+                builder.append(c);
                 while (true) {
-                    if (i != input.length() - 1 && isLiteral(input.charAt(i + 1))) {
+                    if (i != input.length() - 1 && (isLiteral(input.charAt(i + 1))||input.charAt(i+1)=='.')) {
                         i++;
-                        inv_number.add(input.charAt(i) - '0');
+                        builder.append(input.charAt(i));
                     } else {
                         break;
                     }
                 }
-                int value = 0;
-                for (int j = 0; j < inv_number.size(); j++) {
-                    value += inv_number.elementAt(j) * Math.pow(10, (inv_number.size() - j - 1));
-                }
-                expr = new LiteralValue(value);
+                expr = new LiteralValue(Double.parseDouble(builder.toString()));
             } else if (c == '(') {
                 expr = new ParenthesisExpression(BraceType.open);
             } else if (c == ')') {
@@ -112,7 +108,7 @@ public class ParserImpl implements Parser {
     }
 
     boolean isAllowed(char c) {
-        return isOperator(c) || isLiteral(c) || c == '(' || c == ')' || Character.isLetter(c);
+        return isOperator(c) || isLiteral(c) || c == '(' || c == ')' || c == '.' || Character.isLetter(c);
     }
 
     boolean isOperator(char c) {

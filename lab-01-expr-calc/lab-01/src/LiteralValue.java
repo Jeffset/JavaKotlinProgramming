@@ -1,6 +1,6 @@
 public class LiteralValue implements Literal {
 
-    public LiteralValue(int value) {
+    public LiteralValue(double value) {
         this.value = value;
     }
 
@@ -14,5 +14,5 @@ public class LiteralValue implements Literal {
         return visitor.visitLiteral(this);
     }
 
-    int value;
+    double value;
 }
