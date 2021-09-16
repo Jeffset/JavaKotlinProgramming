@@ -14,20 +14,19 @@ public class ParserImpl implements Parser {
         ArrayList<Expression> result = new ArrayList<>();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            if(c == ' ') {
+            if (c == ' ') {
                 continue;
             }
             Expression expr;
             if (!isAllowed(c)) {
                 throw new ExpressionParseException();
-            } else if(Character.isLetter(c)) {
+            } else if (Character.isLetter(c)) {
                 expr = new VariableLiteral(String.valueOf(c));
-            }
-            else if (isLiteral(c)) {
-                Vector<Integer> inv_number = new Vector<Integer>();
-                inv_number.add(c-'0');
-                while(true) {
-                    if(i != input.length() - 1 && isLiteral(input.charAt(i + 1))) {
+            } else if (isLiteral(c)) {
+                Vector<Integer> inv_number = new Vector<>();
+                inv_number.add(c - '0');
+                while (true) {
+                    if (i != input.length() - 1 && isLiteral(input.charAt(i + 1))) {
                         i++;
                         inv_number.add(input.charAt(i) - '0');
                     } else {
@@ -35,8 +34,8 @@ public class ParserImpl implements Parser {
                     }
                 }
                 int value = 0;
-                for(int j = 0; j < inv_number.size(); j++) {
-                    value += inv_number.elementAt(j) * Math.pow(10,(inv_number.size() - j - 1));
+                for (int j = 0; j < inv_number.size(); j++) {
+                    value += inv_number.elementAt(j) * Math.pow(10, (inv_number.size() - j - 1));
                 }
                 expr = new LiteralValue(value);
             } else if (c == '(') {
@@ -44,23 +43,13 @@ public class ParserImpl implements Parser {
             } else if (c == ')') {
                 expr = new ParenthesisExpression(BraceType.close);
             } else {
-                BinOpKind opKind;
-                switch (c) {
-                    case '+':
-                        opKind = BinOpKind.plus;
-                        break;
-                    case '-':
-                        opKind = BinOpKind.minus;
-                        break;
-                    case '*':
-                        opKind = BinOpKind.mult;
-                        break;
-                    case '/':
-                        opKind = BinOpKind.div;
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + c);
-                }
+                BinOpKind opKind = switch (c) {
+                    case '+' -> BinOpKind.plus;
+                    case '-' -> BinOpKind.minus;
+                    case '*' -> BinOpKind.mult;
+                    case '/' -> BinOpKind.div;
+                    default -> throw new IllegalStateException("Unexpected value: " + c);
+                };
                 expr = new BinaryExpressionImpl(opKind, null, null);
             }
             result.add(expr);
@@ -76,15 +65,11 @@ public class ParserImpl implements Parser {
                 result.add(i);
                 continue;
             }
-            if (i instanceof ParenthesisExpression) {
-                ParenthesisExpression brace = (ParenthesisExpression) i;
+            if (i instanceof ParenthesisExpression brace) {
                 if (brace.brace_type == BraceType.open) {
                     stack.push(i);
                 } else {
-                    while (true) {
-                        if ((stack.peek() instanceof ParenthesisExpression) && (((ParenthesisExpression) stack.peek()).brace_type == BraceType.open)) {
-                            break;
-                        }
+                    while ((!(stack.peek() instanceof ParenthesisExpression)) || (((ParenthesisExpression) stack.peek()).brace_type != BraceType.open)) {
                         result.add(stack.peek());
                         stack.pop();
                     }
@@ -139,8 +124,7 @@ public class ParserImpl implements Parser {
     }
 
     private int Priority(Expression token) {
-        if (token instanceof BinaryExpressionImpl) {
-            BinaryExpressionImpl expr = (BinaryExpressionImpl) token;
+        if (token instanceof BinaryExpressionImpl expr) {
             if (expr.getOperation() == BinOpKind.mult
                     || expr.getOperation() == BinOpKind.div) {
                 return 1;

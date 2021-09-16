@@ -3,25 +3,19 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class ComputeExpressionVisitor implements ExpressionVisitor {
-    Map<String, Double> variables = new HashMap<String, Double>();
+    Map<String, Double> variables = new HashMap<>();
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
         BinOpKind opKind = expr.getOperation();
         double left_operand = (double) expr.getLeft().accept(this);
         double right_operand = (double) expr.getRight().accept(this);
-        switch (opKind) {
-            case plus:
-                return left_operand + right_operand;
-            case minus:
-                return left_operand - right_operand;
-            case mult:
-                return left_operand * right_operand;
-            case div:
-                return left_operand / right_operand;
-            default:
-                throw new IllegalStateException("Unexpected value: " + opKind);
-        }
+        return switch (opKind) {
+            case plus -> left_operand + right_operand;
+            case minus -> left_operand - right_operand;
+            case mult -> left_operand * right_operand;
+            case div -> left_operand / right_operand;
+        };
     }
 
     @Override
