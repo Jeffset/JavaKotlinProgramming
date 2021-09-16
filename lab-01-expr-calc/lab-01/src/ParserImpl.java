@@ -2,7 +2,6 @@ import exceptions.ExpressionParseException;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.Vector;
 
 public class ParserImpl implements Parser {
     @Override
@@ -22,7 +21,7 @@ public class ParserImpl implements Parser {
                 throw new ExpressionParseException();
             } else if (Character.isLetter(c)) {
                 expr = new VariableLiteral(String.valueOf(c));
-            } else if (isLiteral(c)) {
+            } else if (isLiteral(c) || c == '.') {
                 StringBuilder builder = new StringBuilder();
                 builder.append(c);
                 while (true) {
