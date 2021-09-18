@@ -1,4 +1,5 @@
 public class LiteralValue implements Literal {
+    private final double value;
 
     public LiteralValue(double value) {
         this.value = value;
@@ -13,6 +14,4 @@ public class LiteralValue implements Literal {
     public Object accept(ExpressionVisitor visitor) {
         return visitor.visitLiteral(this);
     }
-
-    double value;
 }

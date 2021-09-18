@@ -6,7 +6,7 @@ import java.util.Stack;
 public class ParserImpl implements Parser {
     @Override
     public Expression parseExpression(String input) throws ExpressionParseException {
-        return FromPostfixToTree(InfixToPostfix(parseRawString(input)));
+        return FromPostfixToTree(infixToPostfix(parseRawString(input)));
     }
 
     private ArrayList<Expression> parseRawString(String input) throws ExpressionParseException {
@@ -20,7 +20,7 @@ public class ParserImpl implements Parser {
             if (!isAllowed(c)) {
                 throw new ExpressionParseException();
             } else if (Character.isLetter(c)) {
-                expr = new VariableLiteral(String.valueOf(c));
+                expr = new VariableExpression(String.valueOf(c));
             } else if (isLiteral(c) || c == '.') {
                 StringBuilder builder = new StringBuilder();
                 builder.append(c);
@@ -34,15 +34,15 @@ public class ParserImpl implements Parser {
                 }
                 expr = new LiteralValue(Double.parseDouble(builder.toString()));
             } else if (c == '(') {
-                expr = new ParenthesisExpression(BraceType.open);
+                expr = new ParenthesisExpression(BraceType.OPEN);
             } else if (c == ')') {
-                expr = new ParenthesisExpression(BraceType.close);
+                expr = new ParenthesisExpression(BraceType.CLOSE);
             } else {
                 BinOpKind opKind = switch (c) {
-                    case '+' -> BinOpKind.plus;
-                    case '-' -> BinOpKind.minus;
-                    case '*' -> BinOpKind.mult;
-                    case '/' -> BinOpKind.div;
+                    case '+' -> BinOpKind.PLUS;
+                    case '-' -> BinOpKind.MINUS;
+                    case '*' -> BinOpKind.MULT;
+                    case '/' -> BinOpKind.DIV;
                     default -> throw new IllegalStateException("Unexpected value: " + c);
                 };
                 expr = new BinaryExpressionImpl(opKind, null, null);
@@ -52,19 +52,19 @@ public class ParserImpl implements Parser {
         return result;
     }
 
-    private ArrayList<Expression> InfixToPostfix(ArrayList<Expression> tokens) {
+    private ArrayList<Expression> infixToPostfix(ArrayList<Expression> tokens) {
         ArrayList<Expression> result = new ArrayList<>();
         Stack<Expression> stack = new Stack<>();
         for (var i : tokens) {
-            if (i instanceof LiteralValue || i instanceof VariableLiteral) {
+            if (i instanceof LiteralValue || i instanceof VariableExpression) {
                 result.add(i);
                 continue;
             }
             if (i instanceof ParenthesisExpression brace) {
-                if (brace.brace_type == BraceType.open) {
+                if (brace.brace_type == BraceType.OPEN) {
                     stack.push(i);
                 } else {
-                    while ((!(stack.peek() instanceof ParenthesisExpression)) || (((ParenthesisExpression) stack.peek()).brace_type != BraceType.open)) {
+                    while ((!(stack.peek() instanceof ParenthesisExpression)) || (((ParenthesisExpression) stack.peek()).brace_type != BraceType.OPEN)) {
                         result.add(stack.peek());
                         stack.pop();
                     }
@@ -91,7 +91,7 @@ public class ParserImpl implements Parser {
         Stack<Expression> st = new Stack<>();
         Expression t;
         for (var i : tokens) {
-            if (!(i instanceof LiteralValue || i instanceof VariableLiteral)) {
+            if (!(i instanceof LiteralValue || i instanceof VariableExpression)) {
                 Expression t1 = st.pop();
                 Expression t2 = st.pop();
                 BinaryExpressionImpl temp = (BinaryExpressionImpl) i;
@@ -120,11 +120,11 @@ public class ParserImpl implements Parser {
 
     private int Priority(Expression token) {
         if (token instanceof BinaryExpressionImpl expr) {
-            if (expr.getOperation() == BinOpKind.mult
-                    || expr.getOperation() == BinOpKind.div) {
+            if (expr.getOperation() == BinOpKind.MULT
+                    || expr.getOperation() == BinOpKind.DIV) {
                 return 1;
-            } else if (expr.getOperation() == BinOpKind.plus
-                    || expr.getOperation() == BinOpKind.minus) {
+            } else if (expr.getOperation() == BinOpKind.PLUS
+                    || expr.getOperation() == BinOpKind.MINUS) {
                 return 0;
             }
         } else {

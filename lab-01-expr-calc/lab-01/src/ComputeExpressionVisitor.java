@@ -1,9 +1,11 @@
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class ComputeExpressionVisitor implements ExpressionVisitor {
-    Map<String, Double> variables = new HashMap<>();
+    private final Map<String, Double> variables;
+
+    public ComputeExpressionVisitor(Map<String, Double> variables) {
+        this.variables = variables;
+    }
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
@@ -11,10 +13,10 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
         double left_operand = (double) expr.getLeft().accept(this);
         double right_operand = (double) expr.getRight().accept(this);
         return switch (opKind) {
-            case plus -> left_operand + right_operand;
-            case minus -> left_operand - right_operand;
-            case mult -> left_operand * right_operand;
-            case div -> left_operand / right_operand;
+            case PLUS -> left_operand + right_operand;
+            case MINUS -> left_operand - right_operand;
+            case MULT -> left_operand * right_operand;
+            case DIV -> left_operand / right_operand;
         };
     }
 
@@ -24,16 +26,7 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
     }
 
     @Override
-    public Object visitVariable(VariableLiteral expr) {
-        if(variables.containsKey(expr.getName())) {
-            return variables.get(expr.getName());
-        } else {
-            System.out.print("value for '" + expr.getName() + "': ");
-            Scanner in = new Scanner(System.in);
-            String input = in.next();
-            double result = Double.parseDouble(input);
-            variables.put(expr.getName(), result);
-            return result;
-        }
+    public Object visitVariable(VariableExpression expr) {
+       return variables.get(expr.getName());
     }
 }

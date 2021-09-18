@@ -16,7 +16,7 @@ public class TreeDepthVisitor implements ExpressionVisitor{
     }
 
     @Override
-    public Object visitVariable(VariableLiteral expr) {
+    public Object visitVariable(VariableExpression expr) {
         return 1;
     }
 }

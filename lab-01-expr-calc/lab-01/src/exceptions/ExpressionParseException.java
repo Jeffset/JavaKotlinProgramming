@@ -1,4 +1,4 @@
 package exceptions;
 
-public class ExpressionParseException extends Throwable {
+public class ExpressionParseException extends Exception {
 }

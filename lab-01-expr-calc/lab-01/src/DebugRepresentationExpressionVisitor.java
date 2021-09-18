@@ -5,10 +5,10 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
         String left_result = (String) expr.getLeft().accept(this);
         String right_result = (String) expr.getRight().accept(this);
         String our_result = switch (expr.getOperation()) {
-            case plus -> "add(";
-            case minus -> "sub(";
-            case mult -> "mult(";
-            case div -> "div(";
+            case PLUS -> "add(";
+            case MINUS -> "sub(";
+            case MULT -> "mult(";
+            case DIV -> "div(";
         };
         return our_result + left_result + ", " + right_result + ")";
     }
@@ -19,7 +19,7 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
     }
 
     @Override
-    public Object visitVariable(VariableLiteral expr) {
+    public Object visitVariable(VariableExpression expr) {
         return expr.getName();
     }
 }
