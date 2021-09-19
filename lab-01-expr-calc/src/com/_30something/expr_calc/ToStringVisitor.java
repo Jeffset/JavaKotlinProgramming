@@ -2,6 +2,8 @@ package com._30something.expr_calc;
 
 public class ToStringVisitor implements ExpressionVisitor {
 
+    public static final ToStringVisitor INSTANCE = new ToStringVisitor();
+
     private ToStringVisitor() {}
 
     @Override
@@ -35,6 +37,4 @@ public class ToStringVisitor implements ExpressionVisitor {
     public Object visitVariable(Variable expr) {
         return expr.getName();
     }
-
-    public static final ToStringVisitor INSTANCE = new ToStringVisitor();
 }
