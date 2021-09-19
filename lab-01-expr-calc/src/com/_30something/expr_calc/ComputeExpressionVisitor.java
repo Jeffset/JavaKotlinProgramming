@@ -1,6 +1,14 @@
 package com._30something.expr_calc;
 
+import java.util.Map;
+
 public class ComputeExpressionVisitor implements ExpressionVisitor {
+
+    Map<String, Double> map;
+
+    public ComputeExpressionVisitor(Map<String, Double> map) {
+        this.map = map;
+    }
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
@@ -36,5 +44,10 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
         return expr.getExpr().accept(this);
+    }
+
+    @Override
+    public Object visitVariable(Variable expr) {
+        return map.get(expr.getName());
     }
 }

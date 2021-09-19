@@ -2,6 +2,8 @@ package com._30something.expr_calc;
 
 public class ParenthesisExpressionImpl implements ParenthesisExpression {
 
+    private final Expression childExpr;
+
     public ParenthesisExpressionImpl(Expression childExpr) {
         this.childExpr = childExpr;
     }
@@ -15,6 +17,4 @@ public class ParenthesisExpressionImpl implements ParenthesisExpression {
     public Expression getExpr() {
         return childExpr;
     }
-
-    private final Expression childExpr;
 }

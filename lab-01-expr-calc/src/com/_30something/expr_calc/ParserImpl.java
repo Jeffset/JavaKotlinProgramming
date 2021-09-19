@@ -8,17 +8,10 @@ import java.util.Stack;
 public class ParserImpl implements Parser {
 
     public enum CharTypes {
-        LITERAL,
         NUMBER,
+        VARIABLE,
         OPERATOR,
         DEFAULT,
-    }
-
-    public CharTypes charType(char c) {
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) return CharTypes.LITERAL;
-        if ((c >= '0' && c <= '9') || c == '.') return CharTypes.NUMBER;
-        if (c == '-' || c == '+' || c == '*' || c == '/' || c == '(' || c == ')') return CharTypes.OPERATOR;
-        return CharTypes.DEFAULT;
     }
 
     public static class Token {
@@ -31,35 +24,49 @@ public class ParserImpl implements Parser {
         }
     }
 
-    public List<Token> tokenize(String input) {
-        List<Token> tokens_list = new ArrayList<>();
-        Token temp_token;
-        char[] chars = input.toCharArray();
-        for (int current_ptr = 0; current_ptr < chars.length; ) {
-            CharTypes token_type = charType(chars[current_ptr]);
-            if (token_type == CharTypes.LITERAL || token_type == CharTypes.NUMBER) {
-                StringBuilder token_name = new StringBuilder();
-                while (current_ptr < chars.length && charType(chars[current_ptr]) == token_type) {
-                    token_name.append(chars[current_ptr]);
-                    current_ptr++;
-                }
-                temp_token = new Token(token_name.toString(), token_type);
-                tokens_list.add(temp_token);
-            } else {
-                temp_token = new Token(Character.toString(chars[current_ptr]), token_type);
-                tokens_list.add(temp_token);
-                current_ptr++;
-            }
-        }
-        return tokens_list;
+    public CharTypes charType(char c) {
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) return CharTypes.VARIABLE;
+        if ((c >= '0' && c <= '9') || c == '.') return CharTypes.NUMBER;
+        if (c == '-' || c == '+' || c == '*' || c == '/' || c == '(' || c == ')') return CharTypes.OPERATOR;
+        return CharTypes.DEFAULT;
     }
 
+    public List<Token> tokenize(String input) {
+        List<Token> tokensList = new ArrayList<>();
+        Token tempToken;
+        char[] chars = input.toCharArray();
+        for (int currentPtr = 0; currentPtr < chars.length; ) {
+            CharTypes tokenType = charType(chars[currentPtr]);
+            if (tokenType == CharTypes.VARIABLE || tokenType == CharTypes.NUMBER) {
+                StringBuilder tokenName = new StringBuilder();
+                while (currentPtr < chars.length && charType(chars[currentPtr]) == tokenType) {
+                    tokenName.append(chars[currentPtr]);
+                    currentPtr++;
+                }
+                tempToken = new Token(tokenName.toString(), tokenType);
+                tokensList.add(tempToken);
+            } else {
+                tempToken = new Token(Character.toString(chars[currentPtr]), tokenType);
+                tokensList.add(tempToken);
+                currentPtr++;
+            }
+        }
+        return tokensList;
+    }
+
+    /**
+     * Validates order of tokens in expression and constructs new tokens.
+     * <strong>It translates variables like '-x' as '-1 * x', but lefts numbers like '-123' as '-123'.</strong>
+     *
+     * @param tokens - raw tokens
+     * @return newTokens - verified tokens
+     * @throws ExpressionParseException - parsing exception
+     */
     public List<Token> verifyTokens(List<Token> tokens) throws ExpressionParseException {
-        List<Token> new_tokens = new ArrayList<>();
-        Token past_token = new Token("", CharTypes.DEFAULT);
-        int left_brackets = 0;
-        boolean unary_sign = false;
-        boolean unary_minus = false;
+        List<Token> newTokens = new ArrayList<>();
+        Token pastToken = new Token("", CharTypes.DEFAULT);
+        int leftBrackets = 0;
+        boolean unaryMinus = false;
         for (Token token : tokens) {
             if (Objects.equals(token.string, " ")) {
                 continue;
@@ -69,101 +76,127 @@ public class ParserImpl implements Parser {
             }
             if (token.type == CharTypes.OPERATOR) {
                 if (Objects.equals(token.string, "(")) {
-                    left_brackets++;
-                    new_tokens.add(token);
-                    unary_minus = unary_sign = false;
+                    leftBrackets++;
+                    if (unaryMinus) {
+                        newTokens.add(new Token("-1", CharTypes.NUMBER));
+                        newTokens.add(new Token("*", CharTypes.OPERATOR));
+                        unaryMinus = false;
+                    } else if (Objects.equals(pastToken.string, ")") || pastToken.type == CharTypes.VARIABLE ||
+                            pastToken.type == CharTypes.NUMBER) {
+                        throw new ExpressionParseException(
+                                "Wrong order of operators found (left bracket after right bracket or literal)");
+                    }
+                    newTokens.add(token);
+                } else if (pastToken.type == CharTypes.DEFAULT) {
+                    throw new ExpressionParseException(
+                            "Wrong order of operators found (operator in the start of expression)");
                 } else if (Objects.equals(token.string, ")")) {
-                    left_brackets--;
-                    if (left_brackets < 0) {
+                    leftBrackets--;
+                    if (leftBrackets < 0) {
                         throw new ExpressionParseException("Overflow with right brackets found");
                     }
-                    new_tokens.add(token);
-                    unary_minus = unary_sign = false;
+                    if (pastToken.type == CharTypes.OPERATOR && !Objects.equals(pastToken.string, ")")) {
+                        throw new ExpressionParseException(
+                                "Wrong order of operators found (right bracket not after literal or right bracket)");
+                    }
+                    newTokens.add(token);
                 } else {
-                    if (past_token.type == CharTypes.OPERATOR && !Objects.equals(past_token.string, ")") &&
-                            !Objects.equals(past_token.string, "(")) {
-                        throw new ExpressionParseException("Wrong order of operands found");
-                    } else if (Objects.equals(past_token.string, "(")) {
-                        if (Objects.equals(token.string, "*") || Objects.equals(token.string, "/")) {
-                            throw new ExpressionParseException("Wrong order of operands found");
+                    if (pastToken.type == CharTypes.OPERATOR) {
+                        if (!Objects.equals(pastToken.string, ")") && !Objects.equals(pastToken.string, "(")) {
+                            throw new ExpressionParseException(
+                                    "Wrong order of operators found (operator after operator)");
+                        } else if (Objects.equals(pastToken.string, "(")) {
+                            if (Objects.equals(token.string, "*") || Objects.equals(token.string, "/")) {
+                                throw new ExpressionParseException(
+                                        "Wrong order of operators found (wrong operator after left bracket)");
+                            } else if (Objects.equals(token.string, "-")) {
+                                unaryMinus = true;
+                            }
                         } else {
-                            if (unary_sign) {
-                                throw new ExpressionParseException("Wrong order of operands found");
-                            }
-                            unary_sign = true;
-                            if (Objects.equals(token.string, "-")) {
-                                unary_minus = true;
-                            }
+                            newTokens.add(token);
                         }
                     } else {
-                        new_tokens.add(token);
+                        newTokens.add(token);
                     }
-                }
-            } else if (token.type == CharTypes.LITERAL) {
-                if (unary_minus) {
-                    new_tokens.add(new Token("-" + token.string, token.type));
-                    unary_minus = unary_sign = false;
-                } else {
-                    new_tokens.add(token);
                 }
             } else {
-                if (token.string.chars().filter(c -> c == '.').count() > 1) {
+                if (pastToken.type == CharTypes.NUMBER || pastToken.type == CharTypes.VARIABLE) {
+                    throw new ExpressionParseException(
+                            "Wrong order of operators found (literal after literal)");
+                }
+                if (Objects.equals(pastToken.string, ")")) {
+                    throw new ExpressionParseException(
+                            "Wrong order of operators found (literal after right bracket)");
+                }
+                if (token.type == CharTypes.NUMBER && token.string.chars().filter(c -> c == '.').count() > 1) {
                     throw new ExpressionParseException("Two dots in float number found: '" + token.string + "'");
-                } else {
-                    if (unary_minus) {
-                        new_tokens.add(new Token("-" + token.string, token.type));
-                        unary_minus = unary_sign = false;
+                }
+                if (unaryMinus) {
+                    if (token.type == CharTypes.NUMBER) {
+                        newTokens.add(new Token("-" + token.string, token.type));
                     } else {
-                        new_tokens.add(token);
+                        newTokens.add(new Token("-1", CharTypes.NUMBER));
+                        newTokens.add(new Token("*", CharTypes.OPERATOR));
+                        newTokens.add(token);
                     }
+                    unaryMinus = false;
+                } else {
+                    newTokens.add(token);
                 }
             }
-            past_token = token;
+            pastToken = token;
         }
-        if (left_brackets > 0) {
+        if (pastToken.type != CharTypes.NUMBER && pastToken.type != CharTypes.VARIABLE &&
+                !Objects.equals(pastToken.string, ")")) {
+            throw new ExpressionParseException("Wrong order of operators found (operator in the end of expression)");
+        }
+        if (leftBrackets > 0) {
             throw new ExpressionParseException("Overflow with left brackets found");
         }
-        return new_tokens;
+        if (newTokens.isEmpty()) {
+            throw new ExpressionParseException("Expression is empty or insignificant");
+        }
+        return newTokens;
     }
 
     public List<Token> buildPolishNotation(List<Token> tokens) {
         Stack<Token> operators = new Stack<>();
-        List<Token> new_list = new ArrayList<>();
+        List<Token> newList = new ArrayList<>();
         for (Token token : tokens) {
             if (token.type == CharTypes.OPERATOR) {
                 if (Objects.equals(token.string, "(")) {
                     operators.add(token);
-                    new_list.add(token);
+                    newList.add(token);
                 } else if (Objects.equals(token.string, ")")) {
                     while (!Objects.equals(operators.peek().string, "(")) {
-                        new_list.add(operators.peek());
+                        newList.add(operators.peek());
                         operators.pop();
                     }
                     operators.pop();
-                    new_list.add(token);
+                    newList.add(token);
                 } else if (Objects.equals(token.string, "*") || Objects.equals(token.string, "/")) {
                     while (!operators.empty() && (Objects.equals(operators.peek().string, "*") ||
                             Objects.equals(operators.peek().string, "/"))) {
-                        new_list.add(operators.peek());
+                        newList.add(operators.peek());
                         operators.pop();
                     }
                     operators.push(token);
                 } else {
                     while (!operators.empty() && !Objects.equals(operators.peek().string, "(")) {
-                        new_list.add(operators.peek());
+                        newList.add(operators.peek());
                         operators.pop();
                     }
                     operators.push(token);
                 }
             } else {
-                new_list.add(token);
+                newList.add(token);
             }
         }
         while (!operators.empty()) {
-            new_list.add(operators.peek());
+            newList.add(operators.peek());
             operators.pop();
         }
-        return new_list;
+        return newList;
     }
 
     public Expression buildExpression(List<Token> tokens) throws ExpressionParseException {
@@ -186,11 +219,14 @@ public class ParserImpl implements Parser {
                     else operation = BinOpKind.DIVIDE;
                     expressions.push(new BinaryExpressionImpl(left_expr, right_expr, operation));
                 }
+            } else if (token.type == CharTypes.NUMBER) {
+                expressions.push(new LiteralImpl(Double.parseDouble(token.string)));
             } else {
-                expressions.push(new LiteralImpl(token.string, token.type));
+                expressions.push(new VariableImpl(token.string));
             }
         }
         if (expressions.size() > 1) {
+            // In case if method 'verifiedTokens' didn't find any errors in expression
             throw new ExpressionParseException("Wrong order of operands found");
         }
         return expressions.peek();

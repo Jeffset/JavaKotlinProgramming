@@ -23,12 +23,17 @@ public class ToStringVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitLiteral(Literal expr) {
-        return ((LiteralImpl) expr).getString();
+        return Double.toString(expr.getValue());
     }
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
         return "(" + expr.getExpr().accept(this) + ")";
+    }
+
+    @Override
+    public Object visitVariable(Variable expr) {
+        return expr.getName();
     }
 
     public static final ToStringVisitor INSTANCE = new ToStringVisitor();

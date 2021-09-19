@@ -21,16 +21,16 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitLiteral(Literal expr) {
-        LiteralImpl castedExpr = (LiteralImpl)expr;
-        if (castedExpr.getType() == ParserImpl.CharTypes.LITERAL) {
-            return "var[" + castedExpr.getString() + "]";
-        } else {
-            return "'" + castedExpr.getValue() + "'";
-        }
+        return "'" + expr.getValue() + "'";
     }
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
         return "paran-expr(" + expr.getExpr().accept(this) + ")";
+    }
+
+    @Override
+    public Object visitVariable(Variable expr) {
+        return "var[" + expr.getName() + "]";
     }
 }
