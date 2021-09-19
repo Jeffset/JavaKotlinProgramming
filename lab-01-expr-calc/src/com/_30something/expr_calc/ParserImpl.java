@@ -56,7 +56,8 @@ public class ParserImpl implements Parser {
 
     /**
      * Validates order of tokens in expression and constructs new tokens.
-     * <strong>It translates variables like '-x' as '-1 * x', but lefts numbers like '-123' as '-123'.</strong>
+     * <strong>It translates variables like '-x' as '-1 * x'.
+     * But lefts numbers like '-123' as '-123' and ignores unary plus.</strong>
      *
      * @param tokens - raw tokens
      * @return newTokens - verified tokens
@@ -88,8 +89,12 @@ public class ParserImpl implements Parser {
                     }
                     newTokens.add(token);
                 } else if (pastToken.type == CharTypes.DEFAULT) {
-                    throw new ExpressionParseException(
-                            "Wrong order of operators found (operator in the start of expression)");
+                    if (Objects.equals(token.string, "-")) {
+                        unaryMinus = true;
+                    } else if (!Objects.equals(token.string, "+")) {
+                        throw new ExpressionParseException(
+                                "Wrong order of operators found (operator in the start of expression)");
+                    }
                 } else if (Objects.equals(token.string, ")")) {
                     leftBrackets--;
                     if (leftBrackets < 0) {

@@ -7,7 +7,11 @@ import java.util.Scanner;
 public class RequestVisitor implements ExpressionVisitor {
 
     Map<String, Double> map = new HashMap<>();
-    Scanner in = new Scanner(System.in);
+    Scanner in;
+
+    public RequestVisitor(Scanner in) {
+        this.in = in;
+    }
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
@@ -30,8 +34,17 @@ public class RequestVisitor implements ExpressionVisitor {
     public Object visitVariable(Variable expr) {
         String varName = expr.getName();
         if (!map.containsKey(varName)) {
-            System.out.printf("Enter value for '%s': ", varName);
-            map.put(varName, in.nextDouble());
+            boolean correctInput = false;
+            while (!correctInput) {
+                try {
+                    System.out.printf("Enter value for '%s': ", varName);
+                    map.put(varName, Double.parseDouble(in.nextLine()));
+                    correctInput = true;
+                } catch (Exception exc) {
+                    System.out.println("Unable to convert input string to value");
+                    System.out.println("Please input value again");
+                }
+            }
         }
         return null;
     }
