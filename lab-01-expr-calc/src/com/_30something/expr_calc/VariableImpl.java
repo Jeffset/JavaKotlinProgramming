@@ -2,6 +2,8 @@ package com._30something.expr_calc;
 
 public class VariableImpl implements Variable {
 
+    private final String name;
+
     public VariableImpl(String name) {
         this.name = name;
     }
@@ -15,6 +17,4 @@ public class VariableImpl implements Variable {
     public String getName() {
         return name;
     }
-
-    private final String name;
 }
