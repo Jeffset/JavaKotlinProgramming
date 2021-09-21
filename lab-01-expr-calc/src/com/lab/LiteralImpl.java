@@ -2,19 +2,19 @@ package com.lab;
 
 public class LiteralImpl implements Literal {
 
-    LiteralImpl(double value) {
-        value_ = value;
+    private final double value;
+
+    LiteralImpl(double val) {
+        value = val;
     }
 
     @Override
     public double getValue() {
-        return value_;
+        return value;
     }
 
     @Override
     public Object accept(ExpressionVisitor visitor) {
         return visitor.visitLiteral(this);
     }
-
-    private final double value_;
 }

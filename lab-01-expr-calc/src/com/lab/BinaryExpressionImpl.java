@@ -2,10 +2,14 @@ package com.lab;
 
 public class BinaryExpressionImpl implements BinaryExpression {
 
-    BinaryExpressionImpl(Expression left, Expression right, BinOpKind operation) {
-        left_ = left;
-        right_ = right;
-        operation_ = operation;
+    private final BinOpKind operation;
+    private final Expression left;
+    private final Expression right;
+
+    BinaryExpressionImpl(Expression l_expr, Expression r_expr, BinOpKind opKind) {
+        left = l_expr;
+        right = r_expr;
+        operation = opKind;
     }
 
     @Override
@@ -15,21 +19,16 @@ public class BinaryExpressionImpl implements BinaryExpression {
 
     @Override
     public Expression getLeft() {
-        return left_;
+        return left;
     }
 
     @Override
     public Expression getRight() {
-        return right_;
+        return right;
     }
 
     @Override
     public BinOpKind getOperation() {
-        return operation_;
+        return operation;
     }
-
-
-    private final BinOpKind operation_;
-    private final Expression left_;
-    private final Expression right_;
 }

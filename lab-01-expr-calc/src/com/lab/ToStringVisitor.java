@@ -6,8 +6,8 @@ public class ToStringVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
-        String left = (String) expr.getLeft().accept(new ToStringVisitor());
-        String right = (String) expr.getRight().accept(new ToStringVisitor());
+        String left = (String) expr.getLeft().accept(this);
+        String right = (String) expr.getRight().accept(this);
         BinOpKind operation = expr.getOperation();
         switch (operation) {
             case ADD -> {
@@ -35,7 +35,7 @@ public class ToStringVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
-        return "(" + (String) expr.getExpr().accept(new ToStringVisitor()) + ")";
+        return "(" + expr.getExpr().accept(this) + ")";
     }
 
     @Override

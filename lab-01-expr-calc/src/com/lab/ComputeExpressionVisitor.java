@@ -1,20 +1,25 @@
 package com.lab;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class ComputeExpressionVisitor implements ExpressionVisitor {
 
-    ComputeExpressionVisitor(HashMap<String, Double> map) {
-        map_ = map;
+    private final Map<String, Double> variables;
+
+    ComputeExpressionVisitor(Map<String, Double> map) {
+        variables = map;
     }
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
-        double l_value = (Double) expr.getLeft().accept(new ComputeExpressionVisitor(map_));
-        double r_value = (Double) expr.getRight().accept(new ComputeExpressionVisitor(map_));
+        double l_value = (Double) expr.getLeft().accept(this);
+        double r_value = (Double) expr.getRight().accept(this);
         BinOpKind operation = expr.getOperation();
         switch (operation) {
             case DIV -> {
+                if (r_value - 0.0 < 1e-9) {
+                    throw new ArithmeticException("division by zero");
+                }
                 return l_value / r_value;
             }
             case MUL -> {
@@ -39,13 +44,11 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
-        return expr.getExpr().accept(new ComputeExpressionVisitor(map_));
+        return expr.getExpr().accept(this);
     }
 
     @Override
     public Object visitVariable(Variable expr) {
-        return map_.get(expr.getVariable());
+        return variables.get(expr.getVariable());
     }
-
-    private final HashMap<String, Double> map_;
 }

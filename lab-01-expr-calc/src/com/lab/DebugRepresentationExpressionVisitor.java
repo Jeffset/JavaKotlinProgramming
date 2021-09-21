@@ -2,12 +2,16 @@ package com.lab;
 
 public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
 
-    private DebugRepresentationExpressionVisitor() {}
+    public static final DebugRepresentationExpressionVisitor INSTANCE =
+            new DebugRepresentationExpressionVisitor();
+
+    private DebugRepresentationExpressionVisitor() {
+    }
 
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
-        String l_debug = (String) expr.getLeft().accept(new DebugRepresentationExpressionVisitor());
-        String r_debug = (String) expr.getRight().accept(new DebugRepresentationExpressionVisitor());
+        String l_debug = (String) expr.getLeft().accept(this);
+        String r_debug = (String) expr.getRight().accept(this);
         BinOpKind operation = expr.getOperation();
         switch (operation) {
             case ADD -> {
@@ -36,15 +40,11 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
 
-        return "paren-expr(" +
-                (String) expr.getExpr().accept(new DebugRepresentationExpressionVisitor()) + ")";
+        return "paren-expr(" + expr.getExpr().accept(this) + ")";
     }
 
     @Override
     public Object visitVariable(Variable expr) {
         return "var[" + expr.getVariable() + "]";
     }
-
-    public static final DebugRepresentationExpressionVisitor INSTANCE =
-            new DebugRepresentationExpressionVisitor();
 }

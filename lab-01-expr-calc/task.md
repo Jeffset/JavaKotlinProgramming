@@ -32,7 +32,7 @@
 enter expression: (2 + x) * x - y
 tree: sub(mul(paran-expr(add('2', var[x])), var[x]), var[y])
 expr-tree depth: 5
-value for 'x': 2
+****value for 'x': 2****
 value for 'y': 1
 result: 7
 ```

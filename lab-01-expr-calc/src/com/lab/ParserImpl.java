@@ -6,7 +6,8 @@ import java.util.Stack;
 public class ParserImpl implements Parser {
 
     @Override
-    public Expression parseExpression(String input) throws ExpressionParseException {
+    public Expression parseExpression(String input)
+            throws ExpressionParseException {
         // poland notation
         Scanner scanner = new Scanner(input);
         StringBuilder pol_notation = new StringBuilder();
@@ -20,31 +21,31 @@ public class ParserImpl implements Parser {
                 } else if (string.equals(")")) {
                     while (!stack.empty() && !stack.peek().equals("(")) {
                         if (stack.peek().equals(")")) {
-                            throw new ExpressionParseException("ExpressionParseException");
+                            throw new ExpressionParseException("invalid expression");
                         }
-                        pol_notation.append(" " + stack.peek());
+                        pol_notation.append(" ").append(stack.peek());
                         stack.pop();
                     }
                     if (stack.empty()) {
-                        throw new ExpressionParseException("ExpressionParseException");
+                        throw new ExpressionParseException("invalid expression");
                     }
                     stack.pop();
                 } else {
                     while (!stack.empty() && Priority(string) <= Priority(stack.peek())) {
-                        pol_notation.append(" " + stack.peek());
+                        pol_notation.append(" ").append(stack.peek());
                         stack.pop();
                     }
                     stack.push(string);
                 }
             } else {
-                pol_notation.append(" " + string);
+                pol_notation.append(" ").append(string);
             }
         }
         while (!stack.empty()) {
             if (!IsOperation(stack.peek())) {
-                throw new ExpressionParseException("ExpressionParseException");
+                throw new ExpressionParseException("invalid expression");
             }
-            pol_notation.append(" " + stack.peek());
+            pol_notation.append(" ").append(stack.peek());
             stack.pop();
         }
 
@@ -57,7 +58,7 @@ public class ParserImpl implements Parser {
             String string = scanner2.next();
             if (IsOperation(string)) {
                 if (expressions.empty()) {
-                    throw new ExpressionParseException("ExpressionParseException");
+                    throw new ExpressionParseException("invalid expression");
                 }
                 Expression second = expressions.peek();
                 expressions.pop();
@@ -69,11 +70,12 @@ public class ParserImpl implements Parser {
                 }
 
                 if (expressions.empty()) {
-                    throw new ExpressionParseException("ExpressionParseException");
+                    throw new ExpressionParseException("invalid expression");
                 }
                 Expression first = expressions.peek();
                 expressions.pop();
-                expressions.push(new BinaryExpressionImpl(first, second, Operation(string)));
+                expressions.push(new BinaryExpressionImpl(first, second,
+                        BinaryOperation(string)));
             } else if (IsLiteral(string)) {
                 Literal literal = new LiteralImpl(Double.parseDouble(string));
                 expressions.push(literal);
@@ -81,21 +83,21 @@ public class ParserImpl implements Parser {
                 Variable variable = new VariableImpl(string);
                 expressions.push(variable);
             } else {
-                throw new ExpressionParseException("ExpressionParseException");
+                throw new ExpressionParseException("invalid expression");
             }
+        }
+        if (expressions.size() > 1) {
+            throw new ExpressionParseException("invalid expression");
         }
 
         return expressions.peek();
     }
 
     boolean IsOperation(String string) {
-        if (string.equals("+") || string.equals("-") ||
+        return string.equals("+") || string.equals("-") ||
                 string.equals("*") || string.equals("/") ||
                 string.equals("(") || string.equals(")") ||
-                string.equals("()")) {
-            return true;
-        }
-        return false;
+                string.equals("()");
     }
 
     boolean IsLiteral(String string) {
@@ -127,36 +129,33 @@ public class ParserImpl implements Parser {
         return true;
     }
 
-    BinOpKind Operation(String string) throws ExpressionParseException {
-        char[] char_array = string.toCharArray();
-        switch (char_array[0]) {
-            case '+' -> {
+    BinOpKind BinaryOperation(String string) throws ExpressionParseException {
+        switch (string) {
+            case "+" -> {
                 return BinOpKind.ADD;
             }
-            case '-' -> {
+            case "-" -> {
                 return BinOpKind.SUB;
             }
-            case '*' -> {
+            case "*" -> {
                 return BinOpKind.MUL;
             }
-            case '/' -> {
+            case "/" -> {
                 return BinOpKind.DIV;
             }
             default -> {
-                throw new ExpressionParseException("ExpressionParseException");
+                throw new ExpressionParseException("invalid expression");
             }
         }
     }
 
     int Priority(String string) {
-        if (string.equals("()")) {
-            return 3;
-        } else if (string.equals("*") || string.equals("/")) {
-            return 2;
-        } else if (string.equals("+") || string.equals("-")) {
-            return 1;
-        }
-        return 0;
+        return switch (string) {
+            case "()" -> 3;
+            case "*", "/" -> 2;
+            case "+", "-" -> 1;
+            default -> 0;
+        };
     }
 }
 

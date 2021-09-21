@@ -2,8 +2,10 @@ package com.lab;
 
 public class VariableImpl implements Variable {
 
+    private final String variable;
+
     VariableImpl(String string) {
-        string_ = string;
+        variable = string;
     }
 
     @Override
@@ -13,8 +15,6 @@ public class VariableImpl implements Variable {
 
     @Override
     public String getVariable() {
-        return string_;
+        return variable;
     }
-
-    private final String string_;
 }

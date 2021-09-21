@@ -4,7 +4,7 @@ enum BinOpKind {
     SUB,
     ADD,
     MUL,
-    DIV
+    DIV,
 }
 
 public interface BinaryExpression extends Expression {

@@ -5,8 +5,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) {
 
-        Scanner scanner = null;
-        Expression expression = null;
+        Scanner scanner;
+        Expression expression;
         boolean except = true;
         while (except) {
             except = false;
@@ -16,6 +16,7 @@ public class Main {
                 scanner = new Scanner(System.in);
                 char[] str_expr = scanner.nextLine().toCharArray();
                 StringBuilder right_str = new StringBuilder();
+                // adding spaces
                 for (char symbol : str_expr) {
                     if (symbol == '(' || symbol == ')') {
                         right_str.append(' ').append(symbol).append(' ');
@@ -24,27 +25,30 @@ public class Main {
                     right_str.append(symbol);
                 }
                 expression = parser.parseExpression(right_str.toString());
-            } catch (ExpressionParseException exception) {
+
+                String debug = (String) expression.accept(
+                                DebugRepresentationExpressionVisitor.INSTANCE);
+                int depth = (Integer) expression.accept(
+                        DepthExpressionVisitor.INSTANCE);
+                System.out.println("tree: " + debug);
+                System.out.println("expr-tree depth: " + depth);
+
+                // set of variables
+                Map<String, Double> map =
+                        (Map<String, Double>) expression.accept(
+                                new VariablesExpressionVisitor(scanner));
+                double result = (Double) expression.accept(
+                        new ComputeExpressionVisitor(map));
+                System.out.println("result: " + result);
+                String to_string = (String) expression.accept(
+                        ToStringVisitor.INSTANCE);
+                System.out.println(to_string);
+
+            } catch (ExpressionParseException | ArithmeticException exception) {
                 except = true;
                 System.out.println("You have " + exception.getMessage() + ", " +
                         "please try again with correct expression.");
             }
         }
-        String debug = (String) expression.accept(DebugRepresentationExpressionVisitor.INSTANCE);
-        int depth = (Integer) expression.accept(DepthExpressionVisitor.INSTANCE);
-        System.out.println("tree: " + debug);
-        System.out.println("expr-tree depth: " + depth);
-
-        HashSet<String> set = (HashSet<String>) expression.accept(new VariablesExpressionVisitor());
-        HashMap<String, Double> result_map = new HashMap<>();
-        for (String variable : set) {
-            System.out.print("value for " + "'" + variable + "': ");
-            double number = scanner.nextDouble();
-            result_map.put(variable, number);
-        }
-        double result = (Double) expression.accept(new ComputeExpressionVisitor(result_map));
-        System.out.println("result: " + result);
-        String to_string = (String) expression.accept(ToStringVisitor.INSTANCE);
-        System.out.println(to_string);
     }
 }

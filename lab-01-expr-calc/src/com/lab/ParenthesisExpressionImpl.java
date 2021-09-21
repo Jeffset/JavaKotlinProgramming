@@ -2,8 +2,10 @@ package com.lab;
 
 public class ParenthesisExpressionImpl implements ParenthesisExpression {
 
-    ParenthesisExpressionImpl(Expression expression) {
-        expression_  = expression;
+    private final Expression expression;
+
+    ParenthesisExpressionImpl(Expression expr) {
+        expression = expr;
     }
 
     @Override
@@ -13,8 +15,6 @@ public class ParenthesisExpressionImpl implements ParenthesisExpression {
 
     @Override
     public Expression getExpr() {
-        return expression_;
+        return expression;
     }
-
-    private Expression expression_;
 }

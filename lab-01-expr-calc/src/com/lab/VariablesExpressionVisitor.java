@@ -1,32 +1,40 @@
 package com.lab;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class VariablesExpressionVisitor implements ExpressionVisitor {
 
+    private final Scanner scanner;
+    private final Map<String, Double> variables;
+
+    public VariablesExpressionVisitor(Scanner scan) {
+        scanner = scan;
+        variables = new HashMap<>();
+    }
+
     @Override
     public Object visitBinaryExpression(BinaryExpression expr) {
-        HashSet<String> l_set = (HashSet<String>) expr.getLeft().accept(new VariablesExpressionVisitor());
-        HashSet<String> r_set = (HashSet<String>) expr.getRight().accept(new VariablesExpressionVisitor());
-        l_set.addAll(r_set);
-        return l_set;
+        expr.getLeft().accept(this);
+        expr.getRight().accept(this);
+        return variables;
     }
 
     @Override
     public Object visitLiteral(Literal expr) {
-        return new HashSet<>();
+        return variables;
     }
 
     @Override
     public Object visitParenthesis(ParenthesisExpression expr) {
-        return (HashSet<String>) expr.getExpr().accept(new VariablesExpressionVisitor());
+        return expr.getExpr().accept(this);
     }
 
     @Override
     public Object visitVariable(Variable expr) {
-        Set<String> set = new HashSet<>();
-        set.add(expr.getVariable());
-        return set;
+        if (!variables.containsKey(expr.getVariable())) {
+            System.out.print("value for " + "'" + expr.getVariable() + "': ");
+            variables.put(expr.getVariable(), scanner.nextDouble());
+        }
+        return variables;
     }
 }
