@@ -6,5 +6,3 @@ public interface ExpressionVisitor {
     Object visitParenthesis(ParenthesisExpression expr);
     Object visitVariable(Variable expr);
 }
-
-
