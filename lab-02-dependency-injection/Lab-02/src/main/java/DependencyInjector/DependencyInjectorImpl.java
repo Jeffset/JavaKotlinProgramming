@@ -22,8 +22,8 @@ public class DependencyInjectorImpl implements DependencyInjector {
             throw new RuntimeException("Already ended class registration");
         }
         if (!classes.contains(cl)) {
-            classes.add(cl);
             Constructor<?> notUsed = getAnnotatedConstructor(cl);
+            classes.add(cl);
         }
     }
 
@@ -103,6 +103,7 @@ public class DependencyInjectorImpl implements DependencyInjector {
 
     private Constructor<?> getAnnotatedConstructor(Class<?> cl) {
         var constructors = cl.getConstructors();
+
         boolean gotInjectAnnotation = false;
         Constructor<?> inject_constructor = null;
         for (var constructor : constructors) {
@@ -116,7 +117,7 @@ public class DependencyInjectorImpl implements DependencyInjector {
             }
         }
         if (!gotInjectAnnotation) {
-            throw new RuntimeException("Constructors with @Inject not found");
+            throw new RuntimeException("Public constructors with @Inject not found");
         }
         return inject_constructor;
     }

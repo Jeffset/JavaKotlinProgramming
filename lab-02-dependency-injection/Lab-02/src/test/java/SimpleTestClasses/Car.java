@@ -1,3 +1,5 @@
+package SimpleTestClasses;
+
 import javax.inject.Inject;
 
 public class Car {
@@ -6,7 +8,10 @@ public class Car {
     public Car(Engine eng) {
         this.engine = eng;
     }
-    public void Beep() {
-        System.out.println("beep");
+    public String Beep() {
+        return "beep";
+    }
+    public Engine getEngine() {
+        return engine;
     }
 }
