@@ -11,6 +11,8 @@ public class ParserImpl implements Parser {
             throw new ExpressionParseException("Empty expression");
         }
 
+        input = input.replaceAll(" ", "");
+
         int balance = 0;
         int firstTopLevelSecondaryOperatorIdx = -1;
         for (int i = 0; i < input.length(); ++i) {
@@ -19,10 +21,10 @@ public class ParserImpl implements Parser {
                 case ')' -> --balance;
                 case '+', '-' -> {
                     if (balance == 0) {
-                        Expression left = parseExpression(input.substring(0, i - 1));
+                        Expression left = parseExpression(input.substring(0, i));
                         BinaryOperationType operation = input.charAt(i) == '+' ?
                                 BinaryOperationType.PLUS : BinaryOperationType.MINUS;
-                        Expression right = parseExpression(input.substring(i + 2));
+                        Expression right = parseExpression(input.substring(i + 1));
                         return new BinaryExpressionImpl(left, operation, right);
                     }
                 }
@@ -45,10 +47,10 @@ public class ParserImpl implements Parser {
                 }
             }
         } else {
-            Expression left = parseExpression(input.substring(0, firstTopLevelSecondaryOperatorIdx - 1));
+            Expression left = parseExpression(input.substring(0, firstTopLevelSecondaryOperatorIdx));
             BinaryOperationType operation = input.charAt(firstTopLevelSecondaryOperatorIdx) == '*' ?
                     BinaryOperationType.MULTIPLY : BinaryOperationType.DIVIDE;
-            Expression right = parseExpression(input.substring(firstTopLevelSecondaryOperatorIdx + 2));
+            Expression right = parseExpression(input.substring(firstTopLevelSecondaryOperatorIdx + 1));
             return new BinaryExpressionImpl(left, operation, right);
         }
     }
