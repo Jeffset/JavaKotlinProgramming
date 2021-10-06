@@ -1,34 +1,34 @@
 package com.lab01;
 
 public class ParenthesisExpressionImpl implements ParenthesisExpression{
-    private final Expression expression;
+    private final Expression mExpression;
 
     public ParenthesisExpressionImpl(Expression expression) {
-        this.expression = expression;
+        this.mExpression = expression;
     }
 
     @Override
     public double compute() {
-        return expression.compute();
+        return mExpression.compute();
     }
 
     @Override
     public String debugRepresentation() {
-        return String.format("Parenthesis(%s)", expression.debugRepresentation());
+        return String.format("Parenthesis(%s)", mExpression.debugRepresentation());
     }
 
     @Override
     public int depth() {
-        return expression.depth() + 1;
+        return mExpression.depth() + 1;
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor) {
-        return null;
+    public <ResultType> ResultType accept(ExpressionVisitor<ResultType> visitor) {
+        return visitor.visitParenthesis(this);
     }
 
     @Override
     public Expression getExpr() {
-        return expression;
+        return mExpression;
     }
 }

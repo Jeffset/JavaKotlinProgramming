@@ -1,20 +1,19 @@
 package com.lab01;
 
 import java.util.Scanner;
-import java.util.function.Function;
 
 public class LiteralImpl implements Literal {
-    private String name = "";
-    private double value;
-    private boolean isValueSet = false;
+    private String mName = "";
+    private double mValue;
+    private boolean mIsValueSet = false;
 
     public LiteralImpl(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     public LiteralImpl(double value) {
-        this.value = value;
-        isValueSet = true;
+        this.mValue = value;
+        mIsValueSet = true;
     }
 
     @Override
@@ -24,8 +23,8 @@ public class LiteralImpl implements Literal {
 
     @Override
     public String debugRepresentation() {
-        return name.isEmpty() ?
-                String.format(value == (long) value ? "'%.0f'": "'%s'", value) : String.format("[%s]", name);
+        return mName.isEmpty() ?
+                String.format(mValue == (long) mValue ? "'%.0f'": "'%s'", mValue) : String.format("[%s]", mName);
     }
 
     @Override
@@ -34,17 +33,22 @@ public class LiteralImpl implements Literal {
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor) {
-        return null;
+    public <ResultType> ResultType accept(ExpressionVisitor<ResultType> visitor) {
+        return visitor.visitLiteral(this);
     }
 
     @Override
     public double getValue() {
-        if (!isValueSet) {
-            System.out.printf("Enter value of '%s': ", name);
-            value = new Scanner(System.in).nextDouble();
-            isValueSet = true;
+        if (!mIsValueSet) {
+            System.out.printf("Enter value of '%s': ", mName);
+            mValue = new Scanner(System.in).nextDouble();
+            mIsValueSet = true;
         }
-        return value;
+        return mValue;
+    }
+
+    @Override
+    public String getName() {
+        return mName;
     }
 }

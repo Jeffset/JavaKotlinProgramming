@@ -13,5 +13,15 @@ public class Main {
         } catch (Exception parseException) {
             System.out.println(parseException.getMessage());
         }
+
+        System.out.print("\nAnd now using visitors!\nEnter one more expression: ");
+        try {
+            Expression expression = new ParserImpl().parseExpression(new Scanner(System.in).nextLine());
+            System.out.println("Tree: " + expression.accept(new DebugRepresentationExpressionVisitor()));
+            System.out.println("Depth: " + expression.accept(new DepthExpressionVisitor()));
+            System.out.println("Result: " + expression.accept(new ComputeExpressionVisitor()));
+        } catch (Exception parseException) {
+            System.out.println(parseException.getMessage());
+        }
     }
 }

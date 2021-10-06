@@ -5,6 +5,8 @@ import java.util.List;
 
 public class ParserImpl implements Parser {
     public Expression parseExpression(String input) throws ExpressionParseException {
+        // TODO: make it work for linear time
+
         if (input.isEmpty()) {
             throw new ExpressionParseException("Empty expression");
         }

@@ -1,48 +1,47 @@
 package com.lab01;
 
-import java.util.Locale;
 import java.util.function.Function;
 
 public class BinaryExpressionImpl implements BinaryExpression {
-    private final Expression left;
-    private final Expression right;
-    private final BinaryOperationType operation;
+    private final Expression mLeft;
+    private final Expression mRight;
+    private final BinaryOperationType mOperation;
 
     BinaryExpressionImpl(Expression left, BinaryOperationType operation, Expression right) {
-        this.left = left;
-        this.operation = operation;
-        this.right = right;
+        this.mLeft = left;
+        this.mOperation = operation;
+        this.mRight = right;
     }
 
     @Override
     public Expression getLeft() {
-        return left;
+        return mLeft;
     }
 
     @Override
     public Expression getRight() {
-        return right;
+        return mRight;
     }
 
     @Override
     public BinaryOperationType getOperation() {
-        return operation;
+        return mOperation;
     }
 
     @Override
     public double compute() {
-        switch (operation) {
+        switch (mOperation) {
             case PLUS -> {
-                return left.compute() + right.compute();
+                return mLeft.compute() + mRight.compute();
             }
             case MINUS -> {
-                return left.compute() - right.compute();
+                return mLeft.compute() - mRight.compute();
             }
             case MULTIPLY -> {
-                return left.compute() * right.compute();
+                return mLeft.compute() * mRight.compute();
             }
             case DIVIDE -> {
-                return left.compute() / right.compute();
+                return mLeft.compute() / mRight.compute();
             }
         }
 
@@ -54,16 +53,18 @@ public class BinaryExpressionImpl implements BinaryExpression {
     public String debugRepresentation() {
         Function<String, String> capitalize = str -> str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
         return String.format("%s(%s, %s)",
-                capitalize.apply(operation.toString()), left.debugRepresentation(), right.debugRepresentation());
+                capitalize.apply(mOperation.toString()),
+                mLeft.debugRepresentation(),
+                mRight.debugRepresentation());
     }
 
     @Override
     public int depth() {
-        return Math.max(left.depth(), right.depth()) + 1;
+        return Math.max(mLeft.depth(), mRight.depth()) + 1;
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor) {
-        return null;
+    public <ResultType> ResultType accept(ExpressionVisitor<ResultType> visitor) {
+        return visitor.visitBinaryExpression(this);
     }
 }

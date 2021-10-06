@@ -16,5 +16,5 @@ public interface Expression {
      */
     int depth();
 
-    Object accept(ExpressionVisitor visitor);
+    <ResultType> ResultType accept(ExpressionVisitor<ResultType> visitor);
 }
