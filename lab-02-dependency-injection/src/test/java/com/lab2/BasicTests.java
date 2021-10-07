@@ -87,4 +87,26 @@ public class BasicTests {
         Vertex5 vertex5 = (Vertex5) myDi.resolve(Vertex5.class);
         Assert.assertEquals(vertex5.GetSubtreeSum(), 0);
     }
+
+    @Test
+    public void CheckingSingleton() throws InvocationTargetException, NoSuchMethodException,
+            InstantiationException, IllegalAccessException {
+        DiFramework myDi = new DiFrameworkImpl();
+        myDi.register(Vertex1.class);
+        myDi.register(Vertex2.class);
+        myDi.register(Vertex3.class, Vertex3Impl1.class);
+        myDi.register(Vertex4.class);
+        myDi.register(Vertex5.class, Vertex5Impl1.class);
+        myDi.completeRegistration();
+
+        Vertex2 vertex2 = (Vertex2) myDi.resolve(Vertex2.class);
+        vertex2.UpdateCheckingSingleton();
+        Vertex2 vertex21 = (Vertex2) myDi.resolve(Vertex2.class);
+        Assert.assertEquals(vertex2.GetCheckingSingleton(), vertex21.GetCheckingSingleton());
+
+        Vertex1 vertex1 = (Vertex1) myDi.resolve(Vertex1.class);
+        vertex1.UpdateCheckingSingleton();
+        Vertex1 vertex11 = (Vertex1) myDi.resolve(Vertex1.class);
+        Assert.assertNotEquals(vertex1.GetCheckingSingleton(), vertex11.GetCheckingSingleton());
+    }
 }

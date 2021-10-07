@@ -85,4 +85,24 @@ public class ExceptionTests {
         myDi.register(Vertex5.class, Vertex5Impl1.class);
         myDi.completeRegistration();
     }
+
+    @Test(expected = DiFrameworkException.class)
+    public void WrongRegistrationTest6() {
+        DiFramework myDi = new DiFrameworkImpl();
+        myDi.register(MainClass.class);
+        myDi.register(UncompletedRegistration.class);
+        myDi.completeRegistration();
+    }
+
+    @Test(expected = DiFrameworkException.class)
+    public void WrongRegistrationTest7() {
+        DiFramework myDi = new DiFrameworkImpl();
+        myDi.register(Vertex1.class);
+        myDi.register(Vertex2.class);
+        myDi.register(Vertex3.class, Vertex3Impl1.class);
+        myDi.register(Vertex3Impl1.class);
+        myDi.register(Vertex4.class);
+        myDi.register(Vertex5.class, Vertex5Impl1.class);
+        myDi.completeRegistration();
+    }
 }

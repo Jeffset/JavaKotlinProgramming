@@ -6,6 +6,7 @@ public class Vertex1 {
 
     private int subtree_sum;
     private int vertex_number;
+    private int checking_singleton;
 
     @Inject
     public Vertex1(Vertex2 first_vertex, Vertex3 second_vertex) {
@@ -16,5 +17,12 @@ public class Vertex1 {
 
     public int GetSubtreeSum() {
         return subtree_sum;
+    }
+
+    public void UpdateCheckingSingleton() {
+        checking_singleton++;
+    }
+    public int GetCheckingSingleton() {
+        return checking_singleton;
     }
 }
