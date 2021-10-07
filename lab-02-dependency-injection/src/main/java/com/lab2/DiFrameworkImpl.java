@@ -79,15 +79,12 @@ public class DiFrameworkImpl implements DiFramework {
                     throw new DiFrameworkException("found private @Inject annotated constructor");
                 }
                 List<Class<?>> parameters = List.of(constructor.getParameterTypes());
-                if (parameters.isEmpty()) {
-                    throw new DiFrameworkException("no arguments for @Inject constructor found");
-                }
                 graph.put(some_class, new ArrayList<>(parameters));
                 constructors.put(some_class, constructor);
             }
         }
         if (inject_constructor_counter == 0) {
-            graph.put(some_class, null);
+            throw new DiFrameworkException("@Inject constructor not found");
         }
     }
 
@@ -117,15 +114,12 @@ public class DiFrameworkImpl implements DiFramework {
                     throw new DiFrameworkException("found multiple @Inject annotated constructors");
                 }
                 List<Class<?>> parameters = List.of(constructor.getParameterTypes());
-                if (parameters.isEmpty()) {
-                    throw new DiFrameworkException("no arguments for @Inject constructor found");
-                }
                 graph.put(some_interface, new ArrayList<>(parameters));
                 constructors.put(implementation, constructor);
             }
         }
         if (inject_constructor_counter == 0) {
-            graph.put(some_interface, null);
+            throw new DiFrameworkException("@Inject constructor not found");
         }
     }
 
