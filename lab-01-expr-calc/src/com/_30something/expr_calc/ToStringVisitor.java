@@ -1,15 +1,15 @@
 package com._30something.expr_calc;
 
-public class ToStringVisitor implements ExpressionVisitor {
+public class ToStringVisitor implements ExpressionVisitor<String> {
 
     public static final ToStringVisitor INSTANCE = new ToStringVisitor();
 
     private ToStringVisitor() {}
 
     @Override
-    public Object visitBinaryExpression(BinaryExpression expr) {
-        String leftRes = (String) expr.getLeft().accept(this);
-        String rightRes = (String) expr.getRight().accept(this);
+    public String visitBinaryExpression(BinaryExpression expr) {
+        String leftRes = expr.getLeft().accept(this);
+        String rightRes = expr.getRight().accept(this);
         String operation;
         if (expr.getOperation() == BinOpKind.ADD) {
             operation = "+";
@@ -24,17 +24,17 @@ public class ToStringVisitor implements ExpressionVisitor {
     }
 
     @Override
-    public Object visitLiteral(Literal expr) {
+    public String visitLiteral(Literal expr) {
         return Double.toString(expr.getValue());
     }
 
     @Override
-    public Object visitParenthesis(ParenthesisExpression expr) {
+    public String visitParenthesis(ParenthesisExpression expr) {
         return "(" + expr.getExpr().accept(this) + ")";
     }
 
     @Override
-    public Object visitVariable(Variable expr) {
+    public String visitVariable(Variable expr) {
         return expr.getName();
     }
 }

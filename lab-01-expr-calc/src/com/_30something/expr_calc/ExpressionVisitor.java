@@ -1,8 +1,8 @@
 package com._30something.expr_calc;
 
-public interface ExpressionVisitor {
-    Object visitBinaryExpression(BinaryExpression expr);
-    Object visitLiteral(Literal expr);
-    Object visitParenthesis(ParenthesisExpression expr);
-    Object visitVariable(Variable expr);
+public interface ExpressionVisitor<T> {
+    T visitBinaryExpression(BinaryExpression expr);
+    T visitLiteral(Literal expr);
+    T visitParenthesis(ParenthesisExpression expr);
+    T visitVariable(Variable expr);
 }
