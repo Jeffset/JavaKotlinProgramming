@@ -2,7 +2,7 @@ package com._30something.expr_calc;
 
 import java.util.Map;
 
-public class ComputeExpressionVisitor implements ExpressionVisitor {
+public class ComputeExpressionVisitor implements ExpressionVisitor<Double> {
 
     Map<String, Double> map;
 
@@ -11,10 +11,10 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
     }
 
     @Override
-    public Object visitBinaryExpression(BinaryExpression expr) {
+    public Double visitBinaryExpression(BinaryExpression expr) {
         BinOpKind operation = expr.getOperation();
-        Double leftRes = (Double) expr.getLeft().accept(this);
-        Double rightRes = (Double) expr.getRight().accept(this);
+        Double leftRes = expr.getLeft().accept(this);
+        Double rightRes = expr.getRight().accept(this);
         switch (operation) {
             case ADD -> {
                 return leftRes + rightRes;
@@ -30,24 +30,24 @@ public class ComputeExpressionVisitor implements ExpressionVisitor {
                 return leftRes / rightRes;
             }
             case DEFAULT -> {
-                return 0;
+                return 0.;
             }
         }
         return null;
     }
 
     @Override
-    public Object visitLiteral(Literal expr) {
+    public Double visitLiteral(Literal expr) {
         return expr.getValue();
     }
 
     @Override
-    public Object visitParenthesis(ParenthesisExpression expr) {
+    public Double visitParenthesis(ParenthesisExpression expr) {
         return expr.getExpr().accept(this);
     }
 
     @Override
-    public Object visitVariable(Variable expr) {
+    public Double visitVariable(Variable expr) {
         return map.get(expr.getName());
     }
 }

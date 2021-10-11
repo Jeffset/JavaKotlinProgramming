@@ -9,7 +9,7 @@ public class LiteralImpl implements Literal {
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor) {
+    public <T> T accept(ExpressionVisitor<T> visitor) {
         return visitor.visitLiteral(this);
     }
 

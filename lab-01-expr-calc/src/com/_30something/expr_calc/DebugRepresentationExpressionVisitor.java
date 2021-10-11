@@ -1,11 +1,11 @@
 package com._30something.expr_calc;
 
-public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
+public class DebugRepresentationExpressionVisitor implements ExpressionVisitor<String> {
 
     @Override
-    public Object visitBinaryExpression(BinaryExpression expr) {
-        String leftRes = (String) expr.getLeft().accept(this);
-        String rightRes = (String) expr.getRight().accept(this);
+    public String visitBinaryExpression(BinaryExpression expr) {
+        String leftRes = expr.getLeft().accept(this);
+        String rightRes = expr.getRight().accept(this);
         String operationPrefix;
         if (expr.getOperation() == BinOpKind.ADD) {
             operationPrefix = "add";
@@ -20,17 +20,17 @@ public class DebugRepresentationExpressionVisitor implements ExpressionVisitor {
     }
 
     @Override
-    public Object visitLiteral(Literal expr) {
+    public String visitLiteral(Literal expr) {
         return "'" + expr.getValue() + "'";
     }
 
     @Override
-    public Object visitParenthesis(ParenthesisExpression expr) {
+    public String visitParenthesis(ParenthesisExpression expr) {
         return "paran-expr(" + expr.getExpr().accept(this) + ")";
     }
 
     @Override
-    public Object visitVariable(Variable expr) {
+    public String visitVariable(Variable expr) {
         return "var[" + expr.getName() + "]";
     }
 }

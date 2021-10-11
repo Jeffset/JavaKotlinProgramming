@@ -16,11 +16,11 @@ public class Main {
                 System.out.print("Enter expression: ");
                 Expression expr = parser.parseExpression(in.nextLine());
                 System.out.print("Tree: ");
-                System.out.println((String) (expr.accept(debugVisitor)));
+                System.out.println(expr.accept(debugVisitor));
                 System.out.print("Expr-tree depth: ");
                 System.out.println(expr.accept(depthVisitor));
                 System.out.print("Reconstructed expression: ");
-                System.out.println((String) (expr.accept(toStringVisitor)));
+                System.out.println(expr.accept(toStringVisitor));
                 RequestVisitor requestVisitor = new RequestVisitor(in);
                 expr.accept(requestVisitor);
                 Map<String, Double> variablesMap = requestVisitor.getVariablesMap();

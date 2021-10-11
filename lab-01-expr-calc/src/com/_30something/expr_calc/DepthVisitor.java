@@ -9,27 +9,27 @@ package com._30something.expr_calc;
  * @version 1.0
  */
 
-public class DepthVisitor implements ExpressionVisitor {
+public class DepthVisitor implements ExpressionVisitor<Integer> {
 
     @Override
-    public Object visitBinaryExpression(BinaryExpression expr) {
-        Integer leftRes = (Integer) expr.getLeft().accept(this);
-        Integer rightRes = (Integer) expr.getRight().accept(this);
+    public Integer visitBinaryExpression(BinaryExpression expr) {
+        Integer leftRes = expr.getLeft().accept(this);
+        Integer rightRes = expr.getRight().accept(this);
         return Math.max(leftRes, rightRes) + 1;
     }
 
     @Override
-    public Object visitLiteral(Literal expr) {
+    public Integer visitLiteral(Literal expr) {
         return 1;
     }
 
     @Override
-    public Object visitParenthesis(ParenthesisExpression expr) {
-        return (Integer) expr.getExpr().accept(this) + 1;
+    public Integer visitParenthesis(ParenthesisExpression expr) {
+        return expr.getExpr().accept(this) + 1;
     }
 
     @Override
-    public Object visitVariable(Variable expr) {
+    public Integer visitVariable(Variable expr) {
         return 1;
     }
 }

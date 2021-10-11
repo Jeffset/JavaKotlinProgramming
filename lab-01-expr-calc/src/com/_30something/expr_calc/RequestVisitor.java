@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class RequestVisitor implements ExpressionVisitor {
+public class RequestVisitor implements ExpressionVisitor<Void> {
 
     Map<String, Double> map = new HashMap<>();
     Scanner in;
@@ -14,24 +14,25 @@ public class RequestVisitor implements ExpressionVisitor {
     }
 
     @Override
-    public Object visitBinaryExpression(BinaryExpression expr) {
+    public Void visitBinaryExpression(BinaryExpression expr) {
         expr.getLeft().accept(this);
         expr.getRight().accept(this);
         return null;
     }
 
     @Override
-    public Object visitLiteral(Literal expr) {
+    public Void visitLiteral(Literal expr) {
         return null;
     }
 
     @Override
-    public Object visitParenthesis(ParenthesisExpression expr) {
-        return expr.getExpr().accept(this);
+    public Void visitParenthesis(ParenthesisExpression expr) {
+        expr.getExpr().accept(this);
+        return null;
     }
 
     @Override
-    public Object visitVariable(Variable expr) {
+    public Void visitVariable(Variable expr) {
         String varName = expr.getName();
         if (!map.containsKey(varName)) {
             boolean correctInput = false;
