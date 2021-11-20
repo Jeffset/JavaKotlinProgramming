@@ -12,11 +12,14 @@ import SimpleTestClasses.Engine;
 import SingletonTestClasses.MainSingleton;
 import SingletonTestClasses.SingletonDependency;
 import SingletonTestClasses.SlaveSingleton;
+import InterfaceClasses.TestInterface;
+import InterfaceClasses.TestInterfaceImplementation;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-public class Test {
-    @org.junit.jupiter.api.Test
+public class TestInject {
+    @Test
     public void TestSimple() {
         DependencyInjector myDi = new DependencyInjectorImpl();
         myDi.register(Car.class);
@@ -30,7 +33,7 @@ public class Test {
         assertNotEquals(another_car.getEngine(), car.getEngine());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     public void TestSingleton() {
         DependencyInjector myDi = new DependencyInjectorImpl();
         myDi.register(MainSingleton.class);
@@ -48,7 +51,7 @@ public class Test {
         SingletonDependency sd_2 = (SingletonDependency) myDi.resolve(SingletonDependency.class);
         assertNotEquals(sd_1, sd_2);
     }
-    @org.junit.jupiter.api.Test
+    @Test
     public void TestComplex() {
         DependencyInjector myDi = new DependencyInjectorImpl();
         myDi.register(MainComplexClass.class);
@@ -65,7 +68,8 @@ public class Test {
         SingletonComplexDep scd2 = (SingletonComplexDep) myDi.resolve(SingletonComplexDep.class);
         assertEquals(scd1, scd2);
     }
-    @org.junit.jupiter.api.Test
+
+    @Test
     public void TestThrow() {
         DependencyInjector myDi = new DependencyInjectorImpl();
         assertThrows(RuntimeException.class, () -> myDi.register(NoInject.class));
@@ -74,5 +78,13 @@ public class Test {
         assertThrows(UnsupportedOperationException.class, () -> myDi.resolve(myDi.getClass()));
         myDi.completeRegistration();
         assertThrows(UnsupportedOperationException.class, () -> myDi.resolve(myDi.getClass()));
+    }
+    @Test
+    public void TestInterfaces() {
+        DependencyInjector myDi = new DependencyInjectorImpl();
+        myDi.register(TestInterface.class, TestInterfaceImplementation.class);
+        myDi.completeRegistration();
+        TestInterfaceImplementation impl = (TestInterfaceImplementation) myDi.resolve(TestInterface.class);
+        assertEquals(impl.get(), "helo");
     }
 }

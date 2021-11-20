@@ -13,7 +13,7 @@ public class DependencyInjectorImpl implements DependencyInjector {
     List<Class<?>> classes = new ArrayList<>();
 
     Map<Class<?>, Object> singletons = new HashMap<>();
-
+    Map<Class<?>, Class<?>> interfaces = new HashMap<>();
     Vector<Vector<Boolean>> dependencies = new Vector<>();
 
     @Override
@@ -25,6 +25,21 @@ public class DependencyInjectorImpl implements DependencyInjector {
             Constructor<?> notUsed = getAnnotatedConstructor(cl);
             classes.add(cl);
         }
+    }
+
+    @Override
+    public void register(Class<?> interf, Class<?> cl) {
+        if(!interf.isInterface()) {
+            throw new RuntimeException("First argument is not an interface");
+        }
+        if (isCompleteRegistration) {
+            throw new RuntimeException("Already ended class registration");
+        }
+        if (!classes.contains(cl)) {
+            Constructor<?> notUsed = getAnnotatedConstructor(cl);
+            classes.add(cl);
+        }
+        interfaces.put(interf, cl);
     }
 
     @Override
@@ -70,6 +85,7 @@ public class DependencyInjectorImpl implements DependencyInjector {
                 return singletons.get(cl);
             }
         }
+
         return ConstructClass(cl);
     }
 
@@ -94,6 +110,13 @@ public class DependencyInjectorImpl implements DependencyInjector {
     public Object resolve(Class<?> cl) {
         if (!isCompleteRegistration) {
             throw new UnsupportedOperationException("Registration is not complete");
+        }
+        if(cl.isInterface()) {
+            if(interfaces.containsKey(cl)) {
+                return GetInstance(interfaces.get(cl));
+            } else {
+                throw new UnsupportedOperationException("Interface " + cl.getName() + " wasn't registered");
+            }
         }
         if (!classes.contains(cl)) {
             throw new UnsupportedOperationException("Class " + cl.getName() + " wasn't registered");
