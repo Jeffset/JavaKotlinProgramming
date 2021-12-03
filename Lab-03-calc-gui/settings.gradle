@@ -1,0 +1,4 @@
+rootProject.name = 'Lab-03-calc-gui'
+include 'src:main:kotlin'
+findProject(':src:main:kotlin')?.name = 'Calc-gui'
+
