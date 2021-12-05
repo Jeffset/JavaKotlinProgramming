@@ -7,4 +7,4 @@ pluginManagement {
     
 }
 rootProject.name = "Calc-gui"
-
+include("Calc-core")
