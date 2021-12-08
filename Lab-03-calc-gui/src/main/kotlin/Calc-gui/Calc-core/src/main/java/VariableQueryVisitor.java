@@ -20,11 +20,7 @@ public class VariableQueryVisitor implements ExpressionVisitor {
     @Override
     public Object visitVariable(VariableExpression expr) {
         if (!variables.containsKey(expr.getName())) {
-            System.out.print("value for '" + expr.getName() + "': ");
-            Scanner in = new Scanner(System.in);
-            String input = in.next();
-            double result = Double.parseDouble(input);
-            variables.put(expr.getName(), result);
+            variables.put(expr.getName(), 0.0);
         }
         return variables;
     }
