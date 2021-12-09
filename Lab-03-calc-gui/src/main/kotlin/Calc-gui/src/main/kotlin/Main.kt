@@ -5,6 +5,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
@@ -22,7 +23,7 @@ import java.util.*
 @Composable
 @Preview
 fun App() {
-    var result by remember { mutableStateOf(0.0) };
+    var result by remember { mutableStateOf(0.0) }
     var input by remember { mutableStateOf("") }
     var isResultError by remember { mutableStateOf(false) }
     var variables by remember { mutableStateOf(HashMap<String, Double>()) }
@@ -30,6 +31,7 @@ fun App() {
     CompositionLocalProvider(
         LocalDensity provides Density(
             density = 1.5f,
+            fontScale = 1.5f
         )
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -41,7 +43,7 @@ fun App() {
 
                     },
                     isError = isResultError,
-                    modifier = Modifier.fillMaxSize().weight(1f).padding(6.dp),
+                    modifier = Modifier.fillMaxSize().weight(2f).padding(6.dp),
                     singleLine = true
                 )
                 Text(
@@ -229,7 +231,9 @@ fun App() {
                 }
                 for ((name, value) in variables) {
                     Row(modifier = Modifier.weight(1f)) {
-                        Text(name, modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+                        Box(modifier = Modifier.weight(1f).fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(name, textAlign = TextAlign.Center)
+                        }
                         var var_input by remember { mutableStateOf("") }
                         var isVarInputError by remember { mutableStateOf(false) }
                         TextField(
@@ -245,11 +249,12 @@ fun App() {
                                 }
                                 variables[name] = number
                             },
-                            modifier = Modifier.weight(1f).padding(6.dp),
+                            modifier = Modifier.weight(1f).padding(6.dp).fillMaxSize(),
                             singleLine = true,
                             isError = isVarInputError
                         )
                     }
+
                 }
             }
         }
